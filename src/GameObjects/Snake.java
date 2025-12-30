@@ -17,22 +17,22 @@ public class Snake {
     private int length;
     private Map map;
     final private int MAXX = 20, MAXY = 20;
-    public boolean defeat = false;
+    public boolean defeat;
     
     Snake(Point startingPoint, int length, Map map){
         this.length = length;
         this.map = map;
         
-        summon();
+        for(int i=0; i<length; i++){
+            
+        }
         
     }
     
     private boolean collideWall(Point head, Map map){
-        //out of bounds -> to be updated
         if(head.x < 0 || head.x >= MAXX || head.y < 0 || head.y >= MAXY)
             return true;
        
-        //if snake hits a wall
         if(map.valueAtCoord(head.x, head.y) == 1)
             return true;
         
@@ -80,21 +80,5 @@ public class Snake {
     
     public int getLength(){
         return this.length;
-    }
-    
-    public boolean pointCheck(Point point){
-        return snake.contains(point);
-    }
-    
-    private void summon(){
-        Point[] coord = map.spawnPoint;
-        int lengthConstrict = 0;
-        
-        for(Point body: coord){
-            snake.add(body);
-            lengthConstrict++;
-            if(lengthConstrict == length)
-                break;
-        }
     }
 }

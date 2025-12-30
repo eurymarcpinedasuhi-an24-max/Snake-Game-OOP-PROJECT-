@@ -6,7 +6,6 @@ package GameObjects;
 import java.awt.Point;
 import java.io.*;
 import java.util.*;
-import java.awt.Point;
 
 
 /**
@@ -17,8 +16,6 @@ public class Map {
     final private int MAXX = 20, MAXY = 20;
     private int[][] mapSource;
     private Point fruit;
-    private Snake snake;
-    public Point[] spawnPoint;
     public boolean success;
     
     public Map(String fileLink) {
@@ -59,15 +56,10 @@ public class Map {
     }
     
     public void generateFruit(){
-        while(true){
-            int newX = Util.RANDOM.nextInt(0, MAXX);
-            int newY = Util.RANDOM.nextInt(0, MAXY);
-            
-            if (mapSource[newY][newX] == 0 && !snake.pointCheck(new Point(newX, newY))) {
-                fruit = new Point(newX, newY);
-                return;
-}
-        }
+        int newX = Util.RANDOM.nextInt(0, MAXX);
+        int newY = Util.RANDOM.nextInt(0, MAXY);
+        
+        fruit = new Point(newX, newY);
     }
     
     public int valueAtCoord(int x, int y){
