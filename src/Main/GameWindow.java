@@ -1,5 +1,5 @@
+
 import javax.swing.JFrame;
-import java.awt.Dimension;
 
 public class GameWindow extends JFrame {
     public GameWindow() {
