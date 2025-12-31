@@ -11,4 +11,8 @@ import java.security.SecureRandom;
  */
 public class Util {
     public static final SecureRandom RANDOM = new SecureRandom();
+    
+    public static void addScore(int score){
+        
+    };
 }

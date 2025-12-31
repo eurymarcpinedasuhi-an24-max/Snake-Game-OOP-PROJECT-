@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package GameObjects;
+import GameModes.Direction;
 import java.awt.Point;
 import java.util.Deque;
 import java.util.LinkedList;
@@ -18,25 +19,18 @@ public class Snake {
     private Map map;
     final private int MAXX = 20, MAXY = 20;
     public boolean defeat = false;
+    public int addScore = 0;
     
-    Snake(Point startingPoint, int length, Map map){
+    Snake(int length, Point[] spawnPoint, Map map){
         this.length = length;
         this.map = map;
         
-        summon();
-        
+        summon(spawnPoint);
     }
     
     private boolean collideWall(Point head, Map map){
-        //out of bounds -> to be updated
-        if(head.x < 0 || head.x >= MAXX || head.y < 0 || head.y >= MAXY)
-            return true;
-       
         //if snake hits a wall
-        if(map.valueAtCoord(head.x, head.y) == 1)
-            return true;
-        
-        return false;
+        return map.valueAtCoord(head.x, head.y) == 1;
     }
     
     private boolean collideSelf(Point head){
@@ -46,18 +40,17 @@ public class Snake {
     private boolean collideFruit(Point head, Map map){
         Point fruit = map.fruitCoord();
         
-        return fruit.x == head.x && fruit.y == head.x;
+        return (fruit.x == head.x) && (fruit.y == head.y);
     }
     
-    public void moveSnake(final int direction){
-        //-2 left, -1 down, 1 up, 2 right
-        if(direction < -2 || direction > 2 || direction == 0)
-            return;
+    public void moveSnake(final Direction direction){
         
-        int dx = direction == -2? -1: (direction == 2? 1: 0);
-        int dy = direction == -1? -1: (direction != 1? 1: 0);
+        int dx = direction == Direction.LEFT? -1: (direction == Direction.RIGHT? 1: 0);
+        int dy = direction == Direction.UP? -1: (direction == Direction.DOWN? 1: 0);
         Point head = snake.peekFirst();
-        Point newHead = new Point(head.x + dx, head.y + dy);
+        int newx = (head.x + dx + MAXX) % MAXX;
+        int newy = (head.y + dy + MAXY) % MAXY;
+        Point newHead = new Point(newx, newy);
         
         if(collideSelf(newHead) || collideWall(newHead, map)){
             defeat = true;
@@ -76,6 +69,7 @@ public class Snake {
     public void eatFruit(Point point, Point newHead){
         snake.addFirst(newHead);
         map.generateFruit();
+        addScore = 10;
     }
     
     public int getLength(){
@@ -86,8 +80,7 @@ public class Snake {
         return snake.contains(point);
     }
     
-    private void summon(){
-        Point[] coord = map.spawnPoint;
+    private void summon(Point[] coord){
         int lengthConstrict = 0;
         
         for(Point body: coord){
@@ -96,5 +89,9 @@ public class Snake {
             if(lengthConstrict == length)
                 break;
         }
+    }
+    
+    public Point[] coordinates() {
+        return snake.toArray(new Point[0]);
     }
 }

@@ -3,7 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package GameObjects;
-import java.awt.Point;
 import java.io.*;
 import java.util.*;
 import java.awt.Point;
@@ -17,37 +16,42 @@ public class Map {
     final private int MAXX = 20, MAXY = 20;
     private int[][] mapSource;
     private Point fruit;
-    private Snake snake;
-    public Point[] spawnPoint;
+    public Snake snake;
     public boolean success;
     
-    public Map(String fileLink) {
+    public Map(String fileLink, Point[] spawnPoint) {
         try {
-            mapSource = loadMap(fileLink);
-            success = true;
+            this.mapSource = loadMap(fileLink);
+            this.success = true;
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Failed to load map!");
 
             // Fallback to empty map or stop game
-            mapSource = new int[0][0];
-            success = false;
+            this.mapSource = new int[0][0];
+            this.success = false;
         }
+        this.snake = new Snake(5, spawnPoint, this);
+        generateFruit();
     }
     
-    private int[][] loadMap(String filePath) throws IOException {
+    private int[][] loadMap(String fileName) throws IOException {
         List<int[]> rows = new ArrayList<>();
-        BufferedReader br = new BufferedReader(new FileReader(filePath));
 
-        String line;
-        while ((line = br.readLine()) != null) {
-            int[] row = new int[line.length()];
-            for (int i = 0; i < line.length(); i++) {
-                row[i] = Character.getNumericValue(line.charAt(i));
+        InputStream is = getClass().getResourceAsStream("/GameObjects/" + fileName);
+        if (is == null) throw new IOException("Map file not found: " + fileName);
+
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                int[] row = new int[line.length()];
+                for (int i = 0; i < line.length(); i++) {
+                    char c = line.charAt(i);
+                    row[i] = Character.isDigit(c) ? c - '0' : 0;
+                }
+                rows.add(row);
             }
-            rows.add(row);
         }
-        br.close();
 
         // Convert List to 2D array
         int[][] map = new int[rows.size()][rows.get(0).length];
@@ -57,7 +61,7 @@ public class Map {
 
         return map;
     }
-    
+ 
     public void generateFruit(){
         while(true){
             int newX = Util.RANDOM.nextInt(0, MAXX);

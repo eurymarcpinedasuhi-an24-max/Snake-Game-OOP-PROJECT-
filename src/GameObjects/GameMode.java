@@ -3,6 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package GameObjects;
+import GameModes.Direction;
+import GameModes.GamePanel;
+import javax.swing.Timer;
 
 /**
  *
@@ -10,18 +13,30 @@ package GameObjects;
  */
 public abstract class GameMode {
     
+    public Timer gameLoop;
+    protected GamePanel panel;
+    
     public double[] DIFFICULTY = {1.0, 2.0, 3.0, 4.0, 5.0};
-    public Map map;
+    protected Direction direction;
+    protected int diff;
+    protected int score;
     
     public abstract void startGame();
-}
-
-class ClassicGame extends GameMode{
-    ClassicGame(){
-        
+    public abstract void update();
+    
+    protected void render() {
+        if (panel != null) {
+            panel.repaint();
+        }
     }
     
-    public void startGame(){
-        
+    public void setDirection(Direction newDir) {
+    if (!newDir.isOpposite(direction)) {
+        direction = newDir;
+    }
+}
+    
+    public void setPanel(GamePanel panel) {
+        this.panel = panel;
     }
 }
