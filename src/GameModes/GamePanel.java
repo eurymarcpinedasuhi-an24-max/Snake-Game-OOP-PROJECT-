@@ -16,9 +16,20 @@ public class GamePanel extends JPanel {
     private static final int MAXX = 20, MAXY = 20, TILE_SIZE = 20;
 
     final private ClassicGame game;
+    private int gameMode;
+    private int difficulty;
     
 
     public GamePanel() {
+        this(0, 1); // Default constructor for now, default to Classic mode, easy difficulty as default
+    }
+
+    public GamePanel(int gameMode, int difficulty) {
+        this.gameMode = gameMode;
+        this.difficulty = difficulty;
+        
+
+        // TODO Gamemodes on 0 = Classic, 1 = Walls, 2 = Objects, 3 = Impostor. All options use Classic 4 now
         this.game = new ClassicGame(1);
         game.setPanel(this);
         
@@ -28,6 +39,7 @@ public class GamePanel extends JPanel {
         
         setupKeyBindings();
         game.startGame();
+        System.out.println("Game started with Mode: " + gameMode + " Difficulty: " + difficulty);
     }
 
     @Override

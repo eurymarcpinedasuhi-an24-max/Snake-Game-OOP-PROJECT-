@@ -10,10 +10,6 @@
 <project name="SnakeGame" default="default" basedir=".">
     <description>Builds, tests, and runs the project SnakeGame.</description>
     <import file="nbproject/build-impl.xml"/>
-
-    <javac srcdir="src" destdir="build/classes" includeantruntime="false" >
-        <classpath refid="project.class.path"/>
-    </javac>
     <!--
     There exist several targets which are by default empty and which can be 
     used for execution of your tasks. These targets are usually executed 
@@ -73,4 +69,30 @@
     nbproject/build-impl.xml file. 
 
     -->
+
+    <target name="-post-compile">
+        <copy todir="${build.classes.dir}/resources">
+            <fileset dir="${src.dir}/resources"/>
+        </copy>
+        <!-- Copy map files from GameObjects -->
+        <copy todir="${build.classes.dir}/GameObjects">
+            <fileset dir="${src.dir}/GameObjects">
+                <include name="*.txt"/>
+            </fileset>
+        </copy>
+        <!-- Copy map files from GameModes -->
+        <copy todir="${build.classes.dir}/GameModes">
+            <fileset dir="${src.dir}/GameModes">
+                <include name="*.txt"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="jar" depends="compile">
+        <mkdir dir="dist"/>
+        <jar destfile="dist/SnakeGame.jar" basedir="build/classes">
+            <manifest>
+                <attribute name="Main-Class" value="Main.Main"/>
+            </manifest>
+        </jar>
+    </target>
 </project>

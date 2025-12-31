@@ -1,0 +1,295 @@
+package Main;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
+import GameModes.GamePanel;
+
+public class ConfigurationPanel extends JPanel {
+    
+    // Panel size
+    private int panelWidth = 800;
+    private int panelHeight = 600;
+    
+    // Images to be used
+    private BufferedImage backgroundImage;
+    private BufferedImage boardImage;
+    private BufferedImage labelImage;
+    private BufferedImage leftArrowImage;
+    private BufferedImage rightArrowImage;
+    private BufferedImage backButtonImage;
+    
+    // Game mode stuff
+    private String[] gameModes = {"CLASSIC", "WALLS", "OBJECTS", "IMPOSTOR"};
+    private String[] modeDescriptions = {
+        "Standard Snake, grow big and avoid hitting the walls and yourself!",
+        "Extra walls and obstacles are scattered on the board for more challenge!",
+        "Poison Apples (purple) = death, avoid them at all costs!",
+        "Some food are fake! Watch for blinking food or else you'll die!"
+    };
+    private Color[] modeColors = {
+        new Color(76, 175, 80),   // Green
+        new Color(33, 150, 243),  // Blue
+        new Color(255, 152, 0),   // Orange
+        new Color(244, 67, 54)    // Red
+    };
+    private double[] modeMultipliers = {1.0, 1.25, 1.5, 2.0};
+    
+    // Difficulty stuff
+    private String[] difficulties = {"Easy", "Normal", "Hard", "Extreme"};
+    private String[] diffSpeeds = {"Slow Speed", "Medium Speed", "Fast Speed", "Very Fast Speed"};
+    private double[] diffMultipliers = {1.0, 2.0, 3.0, 4.0};
+    
+    // Current selections
+    private int selectedMode = 0;
+    private int selectedDifficulty = 0;
+    
+    // Buttons and labels
+    private JButton[] modeButtons = new JButton[4];
+    private JLabel difficultyNameLabel;
+    private JLabel difficultyDescLabel;
+    
+    public ConfigurationPanel() {
+        setPreferredSize(new Dimension(panelWidth, panelHeight));
+        setLayout(null);
+        loadImages();
+        createButtons();
+    }
+    
+    private void loadImages() {
+        try { //TODO: REHAUL WITH CLASS PATH RESOURCES  LIKE IN MAINMENUPANEL
+            backgroundImage = ImageIO.read(new File("resources/images/background.png"));
+            boardImage = ImageIO.read(new File("resources/images/board.png"));
+            labelImage = ImageIO.read(new File("resources/images/label.png"));
+            leftArrowImage = ImageIO.read(new File("resources/images/leftarrow.png"));
+            rightArrowImage = ImageIO.read(new File("resources/images/rightarrow.png"));
+        } catch (IOException e) {
+            System.out.println("Could not load images!");
+        }
+    }
+    
+    private void createButtons() {
+        // Position values
+        int startX = 120;
+        int startY = 125;
+        int buttonWidth = 560;
+        int buttonHeight = 55;
+        int gap = 8;
+        
+        // Create 4 mode buttons
+        for (int i = 0; i < 4; i++) {
+            int y = startY + i * (buttonHeight + gap);
+            modeButtons[i] = createModeButton(i);
+            modeButtons[i].setBounds(startX, y, buttonWidth, buttonHeight);
+            add(modeButtons[i]);
+        }
+        
+        // Difficulty section Y position
+        int diffY = startY + 4 * (buttonHeight + gap) + 40;
+        
+        // Left arrow
+        JButton leftBtn = createArrowButton(leftArrowImage, -1);
+        leftBtn.setBounds(startX, diffY, 50, 50);
+        add(leftBtn);
+        
+        // Right arrow
+        JButton rightBtn = createArrowButton(rightArrowImage, 1);
+        rightBtn.setBounds(startX + buttonWidth - 50, diffY, 50, 50);
+        add(rightBtn);
+        
+
+        // Difficulty name label
+        difficultyNameLabel = new JLabel(difficulties[0], SwingConstants.CENTER);
+        difficultyNameLabel.setFont(new Font("Arial", Font.BOLD, 24)); //TODO CHANGEFONT
+        difficultyNameLabel.setForeground(Color.WHITE);
+        difficultyNameLabel.setBounds(startX + 70, diffY + 5, buttonWidth - 140, 25);
+        add(difficultyNameLabel);
+
+        // Difficulty description label
+        difficultyDescLabel = new JLabel(diffSpeeds[0] + " - " + diffMultipliers[0] + "x Multiplier", SwingConstants.CENTER);
+        difficultyDescLabel.setFont(new Font("Arial", Font.PLAIN, 12)); //TODO CHANGEFONT
+        difficultyDescLabel.setForeground(Color.LIGHT_GRAY);
+        difficultyDescLabel.setBounds(startX + 70, diffY + 30, buttonWidth - 140, 20);
+        add(difficultyDescLabel);
+
+        // Start button TODO change with asset START.png
+        JButton startBtn = new JButton("START GAME");
+        startBtn.setBounds(300, diffY + 70, 200, 45);
+        startBtn.setBackground(new Color(76, 175, 80));
+        startBtn.setForeground(Color.WHITE);
+        startBtn.setFont(new Font("Arial", Font.BOLD, 16));
+        startBtn.setFocusPainted(false);
+        startBtn.setBorderPainted(false);
+        startBtn.addActionListener(e -> startGame());
+        add(startBtn);
+    }
+    private JButton createModeButton(int index) {
+        JButton button = new JButton();
+        button.setLayout(new BorderLayout());
+        button.setBackground(modeColors[index]);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+    // Add text panel
+        JPanel textPanel = new JPanel();
+        textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
+        textPanel.setOpaque(false);
+        
+        JLabel nameLabel = new JLabel(gameModes[index]);
+        nameLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        nameLabel.setForeground(Color.WHITE);
+        nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        JLabel descLabel = new JLabel(modeDescriptions[index]);
+        descLabel.setFont(new Font("Arial", Font.PLAIN, 10));
+        descLabel.setForeground(new Color(255, 255, 255, 200));
+        descLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        JLabel multLabel = new JLabel("Score Multiplier: " + modeMultipliers[index] + "x");
+        multLabel.setFont(new Font("Arial", Font.ITALIC, 10));
+        multLabel.setForeground(new Color(255, 255, 255, 180));
+        multLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        textPanel.add(Box.createVerticalGlue());
+        textPanel.add(nameLabel);
+        textPanel.add(descLabel);
+        textPanel.add(multLabel);
+        textPanel.add(Box.createVerticalGlue());
+        
+        button.add(textPanel, BorderLayout.CENTER);
+        
+        // Click action
+        button.addActionListener(e -> {
+            selectedMode = index;
+            updateModeButtons();
+        });
+        
+        return button;
+}
+private void updateModeButtons() {
+        for (int i = 0; i < 4; i++) {
+            if (i == selectedMode) {
+                modeButtons[i].setBorder(BorderFactory.createLineBorder(Color.WHITE, 3));
+            } else {
+                modeButtons[i].setBorder(null);
+            }
+        }
+    }
+     private JButton createArrowButton(BufferedImage image, int direction) {
+        JButton button = new JButton();
+        
+        //TODO add actual arrow images. Name: LeftArrow.png and RightArrow.png
+        if (image != null) {
+            button.setIcon(new ImageIcon(image.getScaledInstance(50, 50, Image.SCALE_SMOOTH)));
+        } else {
+            button.setText(direction < 0 ? "<" : ">");
+            button.setFont(new Font("Arial", Font.BOLD, 20));
+        }
+        
+        button.setContentAreaFilled(false);
+        button.setBorderPainted(false);
+        button.setFocusPainted(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        button.addActionListener(e -> {
+            selectedDifficulty = selectedDifficulty + direction;
+            
+            // Wrap around basically
+            if (selectedDifficulty < 0) {
+                selectedDifficulty = 3;
+            }
+            if (selectedDifficulty > 3) {
+                selectedDifficulty = 0;
+            }
+            
+            updateDifficultyLabels();
+        });
+        
+        return button;
+    }
+    // Update difficutlty based on current selection
+    private void updateDifficultyLabels() {
+    difficultyNameLabel.setText(difficulties[selectedDifficulty]);
+    difficultyDescLabel.setText(diffSpeeds[selectedDifficulty] + " - " + diffMultipliers[selectedDifficulty] + "x Multiplier");
+    }
+
+    // Start game itself. Nothing else to modify here.
+    private void startGame() {
+        System.out.println("Starting game!");
+        System.out.println("Mode: " + gameModes[selectedMode]);
+        System.out.println("Difficulty: " + difficulties[selectedDifficulty]);
+        
+        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+        frame.getContentPane().removeAll();
+        
+        GamePanel gamePanel = new GamePanel(selectedMode, selectedDifficulty + 1);
+        frame.add(gamePanel);
+        
+        frame.revalidate();
+        frame.repaint();
+        gamePanel.requestFocusInWindow();
+    }
+@Override
+    protected void paintComponent(Graphics g) { // DON'T modify. Format is just from online template://
+        super.paintComponent(g);
+        
+        // Draw background
+        if (backgroundImage != null) {
+            g.drawImage(backgroundImage, 0, 0, panelWidth, panelHeight, null);
+        } else {
+            g.setColor(new Color(139, 90, 43));
+            g.fillRect(0, 0, panelWidth, panelHeight);
+        }
+        
+        // Draw board
+        int boardX = 75;
+        int boardY = 25;
+        int boardW = 650;
+        int boardH = 550;
+        
+        if (boardImage != null) {
+            g.drawImage(boardImage, boardX, boardY, boardW, boardH, null);
+        } else {
+            g.setColor(new Color(30, 30, 30));
+            g.fillRoundRect(boardX, boardY, boardW, boardH, 20, 20);
+        }
+        
+        // Draw title
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Arial", Font.BOLD, 28));
+        g.drawString("CONFIGURE YOUR GAME", 220, 70);
+        
+        // Draw "Game Mode:" text
+        g.setFont(new Font("Arial", Font.BOLD, 18));
+        g.drawString("Game Mode:", 120, 115);
+        
+        // Draw "Difficulty:" text
+        int diffY = 125 + 4 * (55 + 8) + 30;
+        g.drawString("Difficulty:", 120, diffY - 5);
+        
+        // Draw label background for difficulty
+        int labelX = 170;
+        int labelW = 460;
+        
+        if (labelImage != null) {
+            g.drawImage(labelImage, labelX, diffY, labelW, 55, null);
+        } else {
+            g.setColor(new Color(50, 50, 50));
+            g.fillRoundRect(labelX, diffY, labelW, 55, 10, 10);
+        }
+    }
+    
+    // Getters for selected mode and difficulty. To use in GamePanel
+    public int getSelectedMode() {
+        return selectedMode;
+    }
+    
+    public int getSelectedDifficulty() {
+        return selectedDifficulty;
+    }
+}

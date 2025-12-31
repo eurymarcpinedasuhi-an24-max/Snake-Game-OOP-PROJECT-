@@ -6,9 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
-import java.io.File;
 import java.io.IOException;
-import GameModes.GamePanel;
+import java.io.InputStream;
 
 // Displays title, background and menu buttons with custom assets 
 public class MainMenuPanel extends JPanel {
@@ -31,9 +30,12 @@ public class MainMenuPanel extends JPanel {
 
     private void loadBackground() {
         try {
-            // Load main background image
-            backgroundImage = ImageIO.read(new File("resources/images/background.png"));
-            boardImage = ImageIO.read(new File("resources/images/board.png"));
+            // load images from resources folder
+            InputStream bgStream = getClass().getResourceAsStream("/resources/images/background.png");
+            InputStream boardStream = getClass().getResourceAsStream("/resources/images/board.png");
+            
+            if (bgStream != null) backgroundImage = ImageIO.read(bgStream);
+            if (boardStream != null) boardImage = ImageIO.read(boardStream);
         } catch (IOException e) {
             System.err.println("Error loading background image");
             e.printStackTrace();
@@ -83,7 +85,19 @@ public class MainMenuPanel extends JPanel {
      */
     private void onPlayClicked(ActionEvent e) {
         System.out.println("Play button clicked!");
-        // TODO: Start game 
+
+        JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+        parentFrame.getContentPane().removeAll();
+        
+        // Navigate to configuration panel
+        ConfigurationPanel configPanel = new ConfigurationPanel();
+        parentFrame.add(configPanel);
+
+        parentFrame.revalidate();
+        parentFrame.repaint();
+        
+        /** System.out.println("Play button clicked!");
+        // 
 
         JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this); // Parent JFrame
         parentFrame.getContentPane().removeAll(); // Clearing current panel
@@ -93,7 +107,7 @@ public class MainMenuPanel extends JPanel {
         parentFrame.revalidate(); // Refresh frame 
         parentFrame.repaint();
 
-        gamePanel.requestFocusInWindow();
+        gamePanel.requestFocusInWindow(); */
 
     }
     

@@ -5,8 +5,8 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 // Custom JButton component for menu buttons that have images
 public class MenuButton extends JButton {
@@ -58,8 +58,14 @@ public class MenuButton extends JButton {
      * @param path The file path to the button image
      */
     private void loadImage(String path) {
-        try {
-            buttonImage = ImageIO.read(new File(path));
+        try { // Load image from resources
+            String resourcePath = "/" + path;
+            InputStream stream = getClass().getResourceAsStream(resourcePath);
+            if (stream != null) {
+                buttonImage = ImageIO.read(stream);
+            } else {
+                System.err.println("Resource not found: " + resourcePath);
+            }
         } catch (IOException e) {
             System.err.println("Error loading button image: " + path);
             e.printStackTrace();

@@ -25,7 +25,7 @@ public class ClassicGame extends GameMode{
     };
     
     public ClassicGame(int diff){
-        this.map = new Map("No-Walls.txt", spawnPoint);
+        this.map = new Map("No-walls.txt", spawnPoint);
         if (!this.map.success)
             throw new IllegalStateException("Map failed to load");
         
