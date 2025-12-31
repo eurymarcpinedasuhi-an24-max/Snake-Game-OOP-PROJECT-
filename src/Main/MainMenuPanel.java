@@ -1,10 +1,14 @@
+package Main;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
+
 import java.io.File;
 import java.io.IOException;
+import GameModes.GamePanel;
 
 // Displays title, background and menu buttons with custom assets 
 public class MainMenuPanel extends JPanel {
@@ -29,7 +33,6 @@ public class MainMenuPanel extends JPanel {
         try {
             // Load main background image
             backgroundImage = ImageIO.read(new File("resources/images/background.png"));
-            // Load board overlay image
             boardImage = ImageIO.read(new File("resources/images/board.png"));
         } catch (IOException e) {
             System.err.println("Error loading background image");
@@ -54,7 +57,7 @@ public class MainMenuPanel extends JPanel {
         add(playButton);
         
         // Options Button
-        MenuButton optionsButton = new MenuButton("resources/images/options.png");
+        MenuButton optionsButton = new MenuButton("resources/images/continue.png");
         optionsButton.setBounds(buttonX, startY + spacing, buttonWidth, buttonHeight);
         optionsButton.addActionListener(this::onOptionsClicked);
         add(optionsButton);
@@ -80,7 +83,18 @@ public class MainMenuPanel extends JPanel {
      */
     private void onPlayClicked(ActionEvent e) {
         System.out.println("Play button clicked!");
-        // TODO: Start game
+        // TODO: Start game 
+
+        JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this); // Parent JFrame
+        parentFrame.getContentPane().removeAll(); // Clearing current panel
+        GamePanel gamePanel = new GamePanel(); // Create new game panel — see GameModes/GamePanel.java
+        parentFrame.add(gamePanel); 
+
+        parentFrame.revalidate(); // Refresh frame 
+        parentFrame.repaint();
+
+        gamePanel.requestFocusInWindow();
+
     }
     
     /**
@@ -91,7 +105,7 @@ public class MainMenuPanel extends JPanel {
      */
     private void onOptionsClicked(ActionEvent e) {
         System.out.println("Options button clicked!");
-        // TODO: Show options menu
+        // TODO: Show options menu 
     }
     
     /**
