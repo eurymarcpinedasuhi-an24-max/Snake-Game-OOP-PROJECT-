@@ -7,6 +7,8 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+
 import GameModes.GamePanel;
 
 public class ConfigurationPanel extends JPanel {
@@ -62,11 +64,19 @@ public class ConfigurationPanel extends JPanel {
     
     private void loadImages() {
         try { //TODO: REHAUL WITH CLASS PATH RESOURCES  LIKE IN MAINMENUPANEL
-            backgroundImage = ImageIO.read(new File("resources/images/background.png"));
-            boardImage = ImageIO.read(new File("resources/images/board.png"));
-            labelImage = ImageIO.read(new File("resources/images/label.png"));
-            leftArrowImage = ImageIO.read(new File("resources/images/leftarrow.png"));
-            rightArrowImage = ImageIO.read(new File("resources/images/rightarrow.png"));
+
+            InputStream backgroundImage = getClass().getResourceAsStream("/resources/images/background.png");
+            InputStream boardImage = getClass().getResourceAsStream("/resources/images/board.png");
+            InputStream labelImage = getClass().getResourceAsStream("/resources/images/label.png");
+            InputStream leftArrowImage = getClass().getResourceAsStream("/resources/images/leftarrow.png");
+            InputStream rightArrowImage = getClass().getResourceAsStream("/resources/images/rightarrow.png");
+
+
+            if (backgroundImage != null) this.backgroundImage = ImageIO.read(backgroundImage);
+            if (boardImage != null) this.boardImage = ImageIO.read(boardImage);
+            if (labelImage != null) this.labelImage = ImageIO.read(labelImage);
+            if (leftArrowImage != null) this.leftArrowImage = ImageIO.read(leftArrowImage);
+            if (rightArrowImage != null) this.rightArrowImage = ImageIO.read(rightArrowImage);
         } catch (IOException e) {
             System.out.println("Could not load images!");
         }
@@ -74,9 +84,9 @@ public class ConfigurationPanel extends JPanel {
     
     private void createButtons() {
         // Position values
-        int startX = 120;
+        int startX = 270;
         int startY = 125;
-        int buttonWidth = 560;
+        int buttonWidth = 260;
         int buttonHeight = 55;
         int gap = 8;
         
@@ -91,29 +101,29 @@ public class ConfigurationPanel extends JPanel {
         // Difficulty section Y position
         int diffY = startY + 4 * (buttonHeight + gap) + 40;
         
-        // Left arrow
+        // Left arrow - position to the left of the label
         JButton leftBtn = createArrowButton(leftArrowImage, -1);
-        leftBtn.setBounds(startX, diffY, 50, 50);
+        leftBtn.setBounds(startX - 10, diffY + 2, 30, 30);
         add(leftBtn);
         
-        // Right arrow
+        // Right arrow - position to the right of the label
         JButton rightBtn = createArrowButton(rightArrowImage, 1);
-        rightBtn.setBounds(startX + buttonWidth - 50, diffY, 50, 50);
+        rightBtn.setBounds(startX + buttonWidth -20, diffY + 2, 30, 30);
         add(rightBtn);
         
 
-        // Difficulty name label
+        // Difficulty name label - centered in the label background
         difficultyNameLabel = new JLabel(difficulties[0], SwingConstants.CENTER);
-        difficultyNameLabel.setFont(new Font("Arial", Font.BOLD, 24)); //TODO CHANGEFONT
+        difficultyNameLabel.setFont(new Font("Arial", Font.BOLD, 24));
         difficultyNameLabel.setForeground(Color.WHITE);
-        difficultyNameLabel.setBounds(startX + 70, diffY + 5, buttonWidth - 140, 25);
+        difficultyNameLabel.setBounds(startX, diffY - 5, buttonWidth, 25);
         add(difficultyNameLabel);
 
-        // Difficulty description label
+        // Difficulty description label - centered below the name
         difficultyDescLabel = new JLabel(diffSpeeds[0] + " - " + diffMultipliers[0] + "x Multiplier", SwingConstants.CENTER);
-        difficultyDescLabel.setFont(new Font("Arial", Font.PLAIN, 12)); //TODO CHANGEFONT
+        difficultyDescLabel.setFont(new Font("Arial", Font.PLAIN, 12));
         difficultyDescLabel.setForeground(Color.LIGHT_GRAY);
-        difficultyDescLabel.setBounds(startX + 70, diffY + 30, buttonWidth - 140, 20);
+        difficultyDescLabel.setBounds(startX, diffY + 15, buttonWidth, 20);
         add(difficultyDescLabel);
 
         // Start button TODO change with asset START.png
@@ -128,14 +138,26 @@ public class ConfigurationPanel extends JPanel {
         add(startBtn);
     }
     private JButton createModeButton(int index) {
-        JButton button = new JButton();
+        JButton button = new JButton() {  // Polymorphism / method override for custom painting 4 board. TODO: add separate images for each mode
+            @Override
+            protected void paintComponent(Graphics g) {
+                if (labelImage != null) {
+                    g.drawImage(labelImage, 0, 0, getWidth(), getHeight(), null);
+                } else {
+                    g.setColor(modeColors[index]);
+                    g.fillRect(0, 0, getWidth(), getHeight());
+                }
+                super.paintComponent(g);
+            }
+        };
         button.setLayout(new BorderLayout());
-        button.setBackground(modeColors[index]);
+        button.setOpaque(false);
+        button.setContentAreaFilled(false);
         button.setFocusPainted(false);
         button.setBorderPainted(false);
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-    // Add text panel
+        // Add text panel
         JPanel textPanel = new JPanel();
         textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
         textPanel.setOpaque(false);
@@ -179,13 +201,14 @@ private void updateModeButtons() {
                 modeButtons[i].setBorder(null);
             }
         }
+        repaint();
     }
      private JButton createArrowButton(BufferedImage image, int direction) {
         JButton button = new JButton();
         
         //TODO add actual arrow images. Name: LeftArrow.png and RightArrow.png
         if (image != null) {
-            button.setIcon(new ImageIcon(image.getScaledInstance(50, 50, Image.SCALE_SMOOTH)));
+            button.setIcon(new ImageIcon(image.getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
         } else {
             button.setText(direction < 0 ? "<" : ">");
             button.setFont(new Font("Arial", Font.BOLD, 20));
@@ -266,15 +289,15 @@ private void updateModeButtons() {
         
         // Draw "Game Mode:" text
         g.setFont(new Font("Arial", Font.BOLD, 18));
-        g.drawString("Game Mode:", 120, 115);
+        g.drawString("Game Mode: " + gameModes[selectedMode], 240, 115);
         
         // Draw "Difficulty:" text
         int diffY = 125 + 4 * (55 + 8) + 30;
-        g.drawString("Difficulty:", 120, diffY - 5);
+        g.drawString("Difficulty:", 250, diffY - 10);
         
         // Draw label background for difficulty
-        int labelX = 170;
-        int labelW = 460;
+        int labelX = 270;
+        int labelW = 260;
         
         if (labelImage != null) {
             g.drawImage(labelImage, labelX, diffY, labelW, 55, null);

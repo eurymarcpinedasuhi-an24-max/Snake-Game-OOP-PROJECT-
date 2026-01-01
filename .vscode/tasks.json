@@ -1,0 +1,37 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "compile",
+            "type": "shell",
+            "command": "javac",
+            "args": [
+                "-d",
+                "build/classes",
+                "-sourcepath",
+                "src",
+                "src/Main/*.java",
+                "src/GameObjects/*.java"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "copy-resources",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-Command",
+                "if (Test-Path 'src/Main/resources') { Copy-Item -Path 'src/Main/resources' -Destination 'build/classes' -Recurse -Force }"
+            ]
+        },
+        {
+            "label": "build-all",
+            "dependsOn": ["compile", "copy-resources"],
+            "dependsOrder": "sequence"
+        }
+    ]
+}

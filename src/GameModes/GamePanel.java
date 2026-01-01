@@ -16,7 +16,7 @@ public class GamePanel extends JPanel {
     private static final int MAXX = 20, MAXY = 20, TILE_SIZE = 20;
 
     final private ClassicGame game;
-    private int gameMode;
+    private int gameMode; //TODO implement different game modes
     private int difficulty;
     
 

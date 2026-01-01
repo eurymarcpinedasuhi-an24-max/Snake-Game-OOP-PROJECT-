@@ -74,13 +74,13 @@
         <copy todir="${build.classes.dir}/resources">
             <fileset dir="${src.dir}/resources"/>
         </copy>
-        <!-- Copy map files from GameObjects -->
+        <!-- Copy map files from GameObjects TODO: test if it works by just copying directly -->
         <copy todir="${build.classes.dir}/GameObjects">
             <fileset dir="${src.dir}/GameObjects">
                 <include name="*.txt"/>
             </fileset>
         </copy>
-        <!-- Copy map files from GameModes -->
+        <!-- Copy map files from GameModes TODO: test if it works by just copying directly -->
         <copy todir="${build.classes.dir}/GameModes">
             <fileset dir="${src.dir}/GameModes">
                 <include name="*.txt"/>

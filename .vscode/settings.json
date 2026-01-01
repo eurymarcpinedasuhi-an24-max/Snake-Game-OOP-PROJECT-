@@ -1,0 +1,5 @@
+{
+    "java.project.outputPath": "build/classes",
+    "java.project.sourcePaths": ["src"],
+    "java.compile.nullAnalysis.mode": "automatic"
+}
