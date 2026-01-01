@@ -102,4 +102,12 @@ public class Map {
     public boolean isPoison(){
         return poison != null;
     }
+    
+    public void setFruit(Point point){
+        this.fruit = point;
+    }
+    
+    public void setPoison(Point point){
+        this.poison = point;
+    }
 }

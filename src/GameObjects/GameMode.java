@@ -3,8 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package GameObjects;
-import GameModes.Direction;
-import GameModes.GamePanel;
+import GameModes.*;
 import javax.swing.Timer;
 
 /**
@@ -25,6 +24,16 @@ public abstract class GameMode {
     public abstract void startGame();
     public abstract void update();
     
+    public void loadGame(SaveManager.SaveData save){
+        this.diff = save.difficulty;
+        this.score = save.score;
+        this.direction = save.direction;
+        this.map.snake = new Snake(save.snake.length, save.snake, this.map);
+        this.map.setFruit(save.fruit);
+        if(save.poison != null)
+            this.map.setPoison(save.poison);
+    }
+    
     protected void render() {
         if (panel != null) {
             panel.repaint();
@@ -40,4 +49,5 @@ public abstract class GameMode {
     public void setPanel(GamePanel panel) {
         this.panel = panel;
     }
+    
 }

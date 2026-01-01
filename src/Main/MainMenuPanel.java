@@ -1,5 +1,6 @@
 package Main;
 
+import GameModes.GamePanel;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -119,7 +120,23 @@ public class MainMenuPanel extends JPanel {
      */
     private void onOptionsClicked(ActionEvent e) {
         System.out.println("Options button clicked!");
-        // TODO: Show options menu 
+        
+        
+        
+        /**
+         * Please help fix this 
+         */
+        System.out.println("Continue game!");
+        
+        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+        frame.getContentPane().removeAll();
+        
+        GamePanel gamePanel = new GamePanel();
+        frame.add(gamePanel);
+        
+        frame.revalidate();
+        frame.repaint();
+        gamePanel.requestFocusInWindow();
     }
     
     /**

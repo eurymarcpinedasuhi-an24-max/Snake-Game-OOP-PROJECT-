@@ -6,6 +6,7 @@ package GameModes;
 import GameObjects.GameMode;
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 /**
  *
  * @author eurym
@@ -40,6 +41,28 @@ public class GamePanel extends JPanel {
         setupKeyBindings();
         game.startGame();
         System.out.println("Game started with Mode: " + gameMode + " Difficulty: " + difficulty);
+    }
+    
+    public GamePanel(){
+        SaveManager.SaveData save;
+        
+        try {
+          save = SaveManager.loadGame();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Failed to load map!");
+            Point[] spawnPoint = {
+                new Point(10, 10),
+                new Point(9, 10),
+                new Point(8, 10),
+                new Point(7, 10),
+                new Point(6, 10)
+            };
+            save = new SaveManager.SaveData(1, 1, 0, Direction.RIGHT, spawnPoint, new Point(1, 1), null);
+        }
+        
+        this(save.mode, save.difficulty);
+        this.game.loadGame(save);
     }
 
     @Override
