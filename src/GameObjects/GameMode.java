@@ -15,8 +15,9 @@ public abstract class GameMode {
     
     public Timer gameLoop;
     protected GamePanel panel;
+    public Map map;
     
-    public double[] DIFFICULTY = {1.0, 2.0, 3.0, 4.0, 5.0};
+    public double[] DIFFICULTY = {1.0, 2.0, 3.0, 4.0};
     protected Direction direction;
     protected int diff;
     protected int score;

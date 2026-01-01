@@ -34,13 +34,31 @@ public class Snake {
     }
     
     private boolean collideSelf(Point head){
-        return snake.contains(head);
+        Point[] copy = coordinates();
+        
+        if(copy.length <= 1)
+            return false;
+        
+        for(int i = 0; i < copy.length - 1; i++)
+            if(copy[i].equals(head))
+                return true;
+        
+        return false;
     }
     
     private boolean collideFruit(Point head, Map map){
         Point fruit = map.fruitCoord();
         
         return (fruit.x == head.x) && (fruit.y == head.y);
+    }
+    
+    public boolean collidePoison(Point head, Map map){
+        if(!map.isPoison())
+            return false;
+        
+        Point poison = map.poisonCoord();
+        
+        return (poison.x == head.x) && (poison.y == head.y);
     }
     
     public void moveSnake(final Direction direction){
@@ -57,8 +75,13 @@ public class Snake {
             return;
         }
         
+        if (collidePoison(newHead, map)){
+            getPoisoned(newHead);
+            return;
+        }
+        
         if (collideFruit(newHead, map)){
-            eatFruit(map.fruitCoord(), newHead);
+            eatFruit(newHead);
             return;
         }
         
@@ -66,10 +89,30 @@ public class Snake {
         snake.removeLast();        // remove tail
     }
     
-    public void eatFruit(Point point, Point newHead){
+    public void eatFruit(Point newHead){
         snake.addFirst(newHead);
         map.generateFruit();
         addScore = 10;
+        length++;
+    }
+    
+    public void getPoisoned(Point newHead){
+        if(!map.isPoison())
+            return;
+        
+        if(length <= 1){
+            defeat = true;
+            return;
+        }
+        
+        snake.addFirst(newHead);
+        snake.removeLast();     //override move
+        
+        snake.removeLast();     //get poisoned
+        length--;
+                
+        map.generatePoison();
+        addScore = -5;
     }
     
     public int getLength(){
@@ -94,4 +137,6 @@ public class Snake {
     public Point[] coordinates() {
         return snake.toArray(new Point[0]);
     }
+
+    
 }

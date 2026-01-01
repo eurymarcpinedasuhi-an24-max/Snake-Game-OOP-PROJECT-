@@ -14,8 +14,6 @@ import javax.swing.Timer;
  */
 public class ClassicGame extends GameMode{
     
-    public Map map;
-    
     final public Point[] spawnPoint = {
         new Point(10, 10),
         new Point(9, 10),
@@ -51,9 +49,9 @@ public class ClassicGame extends GameMode{
         map.snake.moveSnake(direction);
         
         if (map.snake.defeat) {          // check defeat flag
-        System.out.println("Game Over!");
-        gameLoop.stop();                 // stop the Timer/game loop
-    }
+            System.out.println("Game Over!");
+            gameLoop.stop();                 // stop the Timer/game loop
+        }
     }
     
 }

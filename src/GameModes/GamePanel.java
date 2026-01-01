@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package GameModes;
+import GameObjects.GameMode;
 import javax.swing.*;
 import java.awt.*;
 /**
@@ -15,22 +16,21 @@ public class GamePanel extends JPanel {
 
     private static final int MAXX = 20, MAXY = 20, TILE_SIZE = 20;
 
-    final private ClassicGame game;
-    private int gameMode; //TODO implement different game modes
+    final private GameMode game;
+    private int gameMode;
     private int difficulty;
-    
-
-    public GamePanel() {
-        this(0, 1); // Default constructor for now, default to Classic mode, easy difficulty as default
-    }
 
     public GamePanel(int gameMode, int difficulty) {
         this.gameMode = gameMode;
         this.difficulty = difficulty;
         
-
-        // TODO Gamemodes on 0 = Classic, 1 = Walls, 2 = Objects, 3 = Impostor. All options use Classic 4 now
-        this.game = new ClassicGame(1);
+        this.game = switch(gameMode) {
+            case 0 -> new ClassicGame(difficulty);
+            case 1 -> new WallGame(difficulty);
+            case 2 -> new PoisonGame(difficulty);
+            case 3 -> new ObstacledGame(difficulty);
+            default -> new ClassicGame(difficulty);
+        };
         game.setPanel(this);
         
         setPreferredSize(new Dimension(800, 600));
@@ -45,7 +45,7 @@ public class GamePanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-
+        
         // 1️⃣ Draw map
         for (int y = 0; y < MAXY; y++) {
             for (int x = 0; x < MAXX; x++) {
@@ -69,13 +69,23 @@ public class GamePanel extends JPanel {
         Point fruit = game.map.fruitCoord();
         g.setColor(Color.RED);
         g.fillRect(
-                fruit.x * TILE_SIZE,
-                fruit.y * TILE_SIZE,
-                TILE_SIZE,
-                TILE_SIZE
+                fruit.x * TILE_SIZE + 2,
+                fruit.y * TILE_SIZE + 2,
+                TILE_SIZE - 4,
+                TILE_SIZE - 4
         );
         
-
+        if(game.map.isPoison()){
+            Point poison = game.map.poisonCoord();
+            g.setColor(Color.MAGENTA);
+            g.fillRect(
+                    poison.x * TILE_SIZE + 2,
+                    poison.y * TILE_SIZE + 2,
+                    TILE_SIZE - 4,
+                    TILE_SIZE - 4
+            );
+        }
+        
         // 3️⃣ Draw snake (overrides map & fruit if overlapping)
         Point[] snake = game.map.snake.coordinates();
         g.setColor(Color.GREEN);

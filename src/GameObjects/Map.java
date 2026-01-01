@@ -16,6 +16,7 @@ public class Map {
     final private int MAXX = 20, MAXY = 20;
     private int[][] mapSource;
     private Point fruit;
+    private Point poison;
     public Snake snake;
     public boolean success;
     
@@ -70,7 +71,19 @@ public class Map {
             if (mapSource[newY][newX] == 0 && !snake.pointCheck(new Point(newX, newY))) {
                 fruit = new Point(newX, newY);
                 return;
-}
+            }
+        }
+    }
+
+    public void generatePoison(){
+        while(true){
+            int newX = Util.RANDOM.nextInt(0, MAXX);
+            int newY = Util.RANDOM.nextInt(0, MAXY);
+            
+            if (mapSource[newY][newX] == 0 && !snake.pointCheck(new Point(newX, newY)) && !fruit.equals(new Point(newX, newY))) {
+                poison = new Point(newX, newY);
+                return;
+            }
         }
     }
     
@@ -81,5 +94,12 @@ public class Map {
     public Point fruitCoord(){
         return fruit;
     }
+
+    public Point poisonCoord() {
+        return poison;
+    }
     
+    public boolean isPoison(){
+        return poison != null;
+    }
 }
