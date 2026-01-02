@@ -1,4 +1,5 @@
 Test1,1000
 Player,120
+Player,110
 YRUE,80
-YRUE,20
+Player,50
