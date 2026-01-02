@@ -39,28 +39,27 @@ public class SaveManager {
     }
     
     public static void saveGame(SaveData save) throws IOException {
+        File file = new File(System.getProperty("user.home"), "save.txt");
 
-        try (PrintWriter pw = new PrintWriter(new FileWriter("save.txt"))) {
-
+        try (PrintWriter pw = new PrintWriter(new FileWriter(file))) {
             pw.println("mode=" + save.mode);
             pw.println("difficulty=" + save.difficulty);
             pw.println("score=" + save.score);
-            pw.println("direction=" + switch(save.direction){
-                case Direction.RIGHT -> 2;
-                case Direction.UP -> 1;
-                case Direction.DOWN -> -1;
-                case Direction.LEFT -> -2;
-            });
+            pw.println("direction=" + save.direction); // save as enum text
 
             // Snake
-            StringBuilder sb = new StringBuilder();
-            for (Point p : save.snake) {
-                sb.append(p.x).append(",").append(p.y).append(";");
+            if (save.snake != null) {
+                StringBuilder sb = new StringBuilder();
+                for (Point p : save.snake) {
+                    sb.append(p.x).append(",").append(p.y).append(";");
+                }
+                pw.println("snake=" + sb.toString());
             }
-            pw.println("snake=" + sb.toString());
 
             // Fruit
-            pw.println("fruit=" + save.fruit.x + "," + save.fruit.y);
+            if (save.fruit != null) {
+                pw.println("fruit=" + save.fruit.x + "," + save.fruit.y);
+            }
 
             // Optional poison
             if (save.poison != null) {
@@ -72,9 +71,15 @@ public class SaveManager {
     public static SaveData loadGame() throws IOException {
         SaveData data = new SaveData();
 
-        try (BufferedReader br = new BufferedReader(new FileReader("save.txt"))) {
-            String line;
+        InputStream is = SaveManager.class.getResourceAsStream("/GameModes/save.txt");
 
+        if (is == null) {
+            System.out.println("save.txt not found in resources!");
+            return data;
+        }
+
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+            String line;
             while ((line = br.readLine()) != null) {
 
                 if (line.startsWith("mode=")) {
@@ -90,13 +95,7 @@ public class SaveManager {
                 }
                 
                 else if (line.startsWith("direction=")) {
-                    data.direction = switch(Integer.parseInt(line.substring(10))){
-                        case -2 -> Direction.LEFT;
-                        case -1 -> Direction.DOWN;
-                        case 1  -> Direction.UP;
-                        case 2  -> Direction.RIGHT;
-                        default -> Direction.RIGHT;
-                    };
+                    data.direction = Direction.valueOf(line.substring(10));
                 }
 
                 else if (line.startsWith("snake=")) {
@@ -133,5 +132,111 @@ public class SaveManager {
         }
 
         return data;
+    }
+    
+    public static enum Mode{
+        classic, wall, poison, maze
+    };
+
+    public static class ScoresSheets {
+        public int[] classic = new int[5];
+        public int[] wall = new int[5];
+        public int[] poison = new int[5];
+        public int[] maze = new int[5];
+        
+        ScoresSheets(int[] classic, int[] wall, int[] poison, int[] maze){
+            for (int i = 0; i < 5; i++){
+                this.classic[i] = classic[i];
+                this.wall[i] = wall[i];
+                this.poison[i] = poison[i];
+                this.maze[i] = maze[i];
+            }
+        }
+        
+        ScoresSheets() {
+            int[] zero = {0, 0, 0, 0, 0};
+            this(zero, zero, zero, zero);
+        }
+        
+        public void save(Mode mode, int score){
+            switch(mode){
+                case Mode.classic: addScore(this.classic, score);
+                case Mode.wall: addScore(this.wall, score);
+                case Mode.poison: addScore(this.poison, score);
+                case Mode.maze: addScore(this.maze, score);
+            }
+        }
+        
+        private static void addScore(int[] scores, int newScore) {
+            int minIndex = 0;
+            for (int i = 1; i < scores.length; i++) {
+                if (scores[i] < scores[minIndex]) {
+                    minIndex = i;
+                }
+            }
+            
+            if (newScore < scores[minIndex])
+                return;
+
+            if (newScore > scores[minIndex]) {
+                scores[minIndex] = newScore;
+                Arrays.sort(scores);      // ascending
+                reverse(scores);          // make it descending
+            }
+        }
+
+        private static void reverse(int[] arr) {
+            for (int i = 0; i < arr.length / 2; i++) {
+                int temp = arr[i];
+                arr[i] = arr[arr.length - 1 - i];
+                arr[arr.length - 1 - i] = temp;
+            }
+        }
+    }
+    
+    public void saveScores(ScoresSheets scores) throws IOException{
+        File file = new File(System.getProperty("user.home"), "save.txt");
+
+        try (PrintWriter pw = new PrintWriter(new FileWriter(file))) {
+            for (int i = 0; i < 5; i++){
+                StringBuilder sb = new StringBuilder();
+                sb.append(scores.classic[i]).append(",")
+                  .append(scores.wall[i]).append(",")
+                  .append(scores.poison[i]).append(",")
+                  .append(scores.maze[i]).append(",");
+                pw.println(sb.toString());
+            }
+        }
+    }
+    
+    public ScoresSheets loadScores() throws IOException {
+        File file = new File(System.getProperty("user.home"), "save.txt");
+
+        ScoresSheets scores = new ScoresSheets();
+
+        // If file does not exist, return empty scores (all zeros)
+        if (!file.exists()) {
+            return scores;
+        }
+
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            int row = 0;
+
+            while ((line = br.readLine()) != null && row < 5) {
+                String[] parts = line.split(",");
+
+                if (parts.length >= 4) {
+                    scores.classic[row] = Integer.parseInt(parts[0]);
+                    scores.wall[row]    = Integer.parseInt(parts[1]);
+                    scores.poison[row]  = Integer.parseInt(parts[2]);
+                    scores.maze[row]    = Integer.parseInt(parts[3]);
+                }
+
+                row++;
+            }
+        }
+
+        return scores;
     }
 }

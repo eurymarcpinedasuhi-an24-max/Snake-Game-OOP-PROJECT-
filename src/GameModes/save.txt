@@ -1,7 +1,7 @@
 mode=1
 difficulty=2
 score=150
-direction=2
+direction=RIGHT
 snake=5,5;5,6;5,7;5,8;5,9;
 fruit=10,3
 poison=12,8

@@ -43,15 +43,4 @@ public class WallGame extends GameMode{
         });
         gameLoop.start();
     }
-    
-    @Override
-    public void update(){
-        map.snake.moveSnake(direction);
-        
-        if (map.snake.defeat) {          // check defeat flag
-            System.out.println("Game Over!");
-            gameLoop.stop();                 // stop the Timer/game loop
-        }
-    }
-    
 }
