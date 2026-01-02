@@ -60,10 +60,10 @@ public class MainMenuPanel extends JPanel {
         add(playButton);
         
         // Options Button
-        MenuButton optionsButton = new MenuButton("resources/images/continue.png");
-        optionsButton.setBounds(buttonX, startY + spacing, buttonWidth, buttonHeight);
-        optionsButton.addActionListener(this::onOptionsClicked);
-        add(optionsButton);
+        MenuButton continueButton = new MenuButton("resources/images/continue.png");
+        continueButton.setBounds(buttonX, startY + spacing, buttonWidth, buttonHeight);
+        continueButton.addActionListener(this::onOptionsClicked);
+        add(continueButton);
         
         // Score Button
         MenuButton scoreButton = new MenuButton("resources/images/score.png");
@@ -148,6 +148,12 @@ public class MainMenuPanel extends JPanel {
     private void onScoreClicked(ActionEvent e) {
         System.out.println("Score button clicked!");
         // TODO: Score menu
+
+        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+        frame.getContentPane().removeAll();
+        frame.add(new GameModes.ScoreBoardPanel());
+        frame.revalidate();
+        frame.repaint();
     }
     
     /**

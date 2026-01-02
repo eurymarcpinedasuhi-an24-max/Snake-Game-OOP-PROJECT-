@@ -31,6 +31,7 @@ public class WallGame extends GameMode{
         this.direction = Direction.RIGHT;
         this.score = 0;
         this.diff = diff;
+        this.gameMode = 1;
     }
     
     @Override
@@ -47,10 +48,15 @@ public class WallGame extends GameMode{
     @Override
     public void update(){
         map.snake.moveSnake(direction);
+        score += map.snake.addScore;
+        map.snake.addScore = 0;
         
         if (map.snake.defeat) {          // check defeat flag
             System.out.println("Game Over!");
             gameLoop.stop();                 // stop the Timer/game loop
+            if (panel != null) {
+                panel.showGameOver(score);
+            }
         }
     }
     

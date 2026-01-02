@@ -2,10 +2,8 @@ package Main;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -23,15 +21,14 @@ public class ConfigurationPanel extends JPanel {
     private BufferedImage labelImage;
     private BufferedImage leftArrowImage;
     private BufferedImage rightArrowImage;
-    private BufferedImage backButtonImage;
     
     // Game mode stuff
     private String[] gameModes = {"CLASSIC", "WALLS", "OBJECTS", "IMPOSTOR"};
     private String[] modeDescriptions = {
-        "Standard Snake, grow big and avoid hitting the walls and yourself!",
-        "Extra walls and obstacles are scattered on the board for more challenge!",
-        "Poison Apples (purple) = death, avoid them at all costs!",
-        "Some food are fake! Watch for blinking food or else you'll die!"
+        "Standard Snake",
+        "Extra walls and obstacles!",
+        "Poison Apples (purple) = -1 length",
+        "Some food are fake!"
     };
     private Color[] modeColors = {
         new Color(76, 175, 80),   // Green
@@ -54,6 +51,9 @@ public class ConfigurationPanel extends JPanel {
     private JButton[] modeButtons = new JButton[4];
     private JLabel difficultyNameLabel;
     private JLabel difficultyDescLabel;
+    
+    // Add player name field
+    private String playerName = "Player";
     
     public ConfigurationPanel() {
         setPreferredSize(new Dimension(panelWidth, panelHeight));
@@ -126,14 +126,9 @@ public class ConfigurationPanel extends JPanel {
         difficultyDescLabel.setBounds(startX, diffY + 15, buttonWidth, 20);
         add(difficultyDescLabel);
 
-        // Start button TODO change with asset START.png
-        JButton startBtn = new JButton("START GAME");
+        // Start button
+        MenuButton startBtn = new MenuButton("resources/images/continue.png");
         startBtn.setBounds(300, diffY + 70, 200, 45);
-        startBtn.setBackground(new Color(76, 175, 80));
-        startBtn.setForeground(Color.WHITE);
-        startBtn.setFont(new Font("Arial", Font.BOLD, 16));
-        startBtn.setFocusPainted(false);
-        startBtn.setBorderPainted(false);
         startBtn.addActionListener(e -> startGame());
         add(startBtn);
     }
@@ -243,14 +238,33 @@ private void updateModeButtons() {
 
     // Start game itself. Nothing else to modify here.
     private void startGame() {
+        // Ask for player name before starting
+        String name = JOptionPane.showInputDialog(
+            SwingUtilities.getWindowAncestor(this),
+            "Enter your name:",
+            "Player Name",
+            JOptionPane.PLAIN_MESSAGE
+        );
+        
+        if (name == null || name.trim().isEmpty()) { // Default name
+            name = "Player";
+        }
+        
+        name = name.trim();
+        if (name.length() > 20) {
+            name = name.substring(0, 20); // Limit
+        }
+        playerName = name;
+        
         System.out.println("Starting game!");
+        System.out.println("Player: " + playerName);
         System.out.println("Mode: " + gameModes[selectedMode]);
         System.out.println("Difficulty: " + difficulties[selectedDifficulty]);
         
         JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
         frame.getContentPane().removeAll();
         
-        GamePanel gamePanel = new GamePanel(selectedMode, selectedDifficulty + 1);
+        GamePanel gamePanel = new GamePanel(selectedMode, selectedDifficulty + 1, playerName);
         frame.add(gamePanel);
         
         frame.revalidate();
@@ -258,15 +272,21 @@ private void updateModeButtons() {
         gamePanel.requestFocusInWindow();
     }
 @Override
-    protected void paintComponent(Graphics g) { // DON'T modify. Format is just from online template://
+    protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+
+        Graphics2D g2d = (Graphics2D) g;
+        
+        // Enable anti-aliasing for smoother text and shapes. Not working(?)
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         
         // Draw background
         if (backgroundImage != null) {
-            g.drawImage(backgroundImage, 0, 0, panelWidth, panelHeight, null);
+            g2d.drawImage(backgroundImage, 0, 0, panelWidth, panelHeight, null);
         } else {
-            g.setColor(new Color(139, 90, 43));
-            g.fillRect(0, 0, panelWidth, panelHeight);
+            g2d.setColor(new Color(139, 90, 43));
+            g2d.fillRect(0, 0, panelWidth, panelHeight);
         }
         
         // Draw board
@@ -276,34 +296,41 @@ private void updateModeButtons() {
         int boardH = 550;
         
         if (boardImage != null) {
-            g.drawImage(boardImage, boardX, boardY, boardW, boardH, null);
+            g2d.drawImage(boardImage, boardX, boardY, boardW, boardH, null);
         } else {
-            g.setColor(new Color(30, 30, 30));
-            g.fillRoundRect(boardX, boardY, boardW, boardH, 20, 20);
+            g2d.setColor(new Color(30, 30, 30));
+            g2d.fillRoundRect(boardX, boardY, boardW, boardH, 20, 20);
         }
         
-        // Draw title
-        g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", Font.BOLD, 28));
-        g.drawString("CONFIGURE YOUR GAME", 220, 70);
+        // Draw title with Graphics2D
+        g2d.setColor(new Color(80, 40, 20));
+        g2d.setFont(new Font("Arial", Font.BOLD, 28));
+        g2d.drawString("CONFIGURE YOUR GAME", 228, 72);
+         // Draw shadow for 3D effect
+        g2d.setColor(new Color(255, 215, 100));
+        g2d.setFont(new Font("Arial", Font.BOLD, 28));
+        g2d.drawString("CONFIGURE YOUR GAME", 225, 69);
+       
+ 
+        
         
         // Draw "Game Mode:" text
-        g.setFont(new Font("Arial", Font.BOLD, 18));
-        g.drawString("Game Mode: " + gameModes[selectedMode], 240, 115);
+        g2d.setFont(new Font("Arial", Font.BOLD, 18));
+        g2d.drawString("Game Mode: " + gameModes[selectedMode], 240, 115);
         
         // Draw "Difficulty:" text
         int diffY = 125 + 4 * (55 + 8) + 30;
-        g.drawString("Difficulty:", 250, diffY - 10);
+        g2d.drawString("Difficulty:", 250, diffY - 10);
         
         // Draw label background for difficulty
         int labelX = 270;
         int labelW = 260;
         
         if (labelImage != null) {
-            g.drawImage(labelImage, labelX, diffY, labelW, 55, null);
+            g2d.drawImage(labelImage, labelX, diffY, labelW, 55, null);
         } else {
-            g.setColor(new Color(50, 50, 50));
-            g.fillRoundRect(labelX, diffY, labelW, 55, 10, 10);
+            g2d.setColor(new Color(50, 50, 50));
+            g2d.fillRoundRect(labelX, diffY, labelW, 55, 10, 10);
         }
     }
     
