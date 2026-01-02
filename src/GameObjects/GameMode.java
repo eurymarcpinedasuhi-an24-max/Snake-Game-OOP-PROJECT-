@@ -23,10 +23,12 @@ public abstract class GameMode {
     protected Direction direction;
     protected int diff;
     protected int score = 0;
+<<<<<<< HEAD
     protected int gameMode; 
+=======
+>>>>>>> 6dbe9b722c18630bad67229529aee9d6b7bb7f05
     
     public abstract void startGame();
-    public abstract void update();
     
     public void loadGame(SaveManager.SaveData save){
         this.diff = save.difficulty;
@@ -37,6 +39,16 @@ public abstract class GameMode {
         this.map.setFruit(save.fruit);
         if(save.poison != null)
             this.map.setPoison(save.poison);
+    }
+    
+    public void update(){
+        map.snake.moveSnake(direction);
+        addScore();
+        
+        if (map.snake.defeat) {          // check defeat flag
+            System.out.println("Game Over! Final Score: " + score);
+            gameLoop.stop();                 // stop the Timer/game loop
+        }
     }
     
     protected void render() {
@@ -55,6 +67,7 @@ public abstract class GameMode {
         this.panel = panel;
     }
     
+<<<<<<< HEAD
     public void addScore() {
         if (map.snake.addScore != 0) {
             int baseScore = map.snake.addScore;
@@ -63,4 +76,13 @@ public abstract class GameMode {
             map.snake.addScore = 0;
         }
     }
+=======
+    public void addScore(){
+        if (map.snake.addScore != 0){
+            this.score += map.snake.addScore;
+            map.snake.addScore = 0;
+        }
+    }
+    
+>>>>>>> 6dbe9b722c18630bad67229529aee9d6b7bb7f05
 }

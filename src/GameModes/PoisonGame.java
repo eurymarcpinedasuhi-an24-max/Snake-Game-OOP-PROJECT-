@@ -46,6 +46,7 @@ public class PoisonGame extends GameMode{
         });
         gameLoop.start();
     }
+<<<<<<< HEAD
     
     @Override
     public void update(){
@@ -62,4 +63,6 @@ public class PoisonGame extends GameMode{
         }
     }
     
+=======
+>>>>>>> 6dbe9b722c18630bad67229529aee9d6b7bb7f05
 }
