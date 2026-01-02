@@ -1,1 +1,4 @@
-Test1, 1000
+Test1,1000
+Player,120
+YRUE,80
+YRUE,20

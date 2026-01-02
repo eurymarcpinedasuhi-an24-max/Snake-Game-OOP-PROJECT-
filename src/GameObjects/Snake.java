@@ -112,7 +112,7 @@ public class Snake {
         length--;
                 
         map.generatePoison();
-        addScore = -5;
+        addScore = -20;
     }
     
     public int getLength(){
