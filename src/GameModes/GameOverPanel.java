@@ -12,13 +12,18 @@ public class GameOverPanel extends JPanel {
     
     private BufferedImage labelImage, homeButtonImage, retryButtonImage;
     private int score, gameMode, difficulty;
-    private String playerName;
+    private String playerName, title;
+
+    public GameOverPanel(int score, int gameMode, int difficulty, String playername) {
+        this(score, gameMode, difficulty, playername, "GAME OVER");
+    }
     
-    public GameOverPanel(int score, int gameMode, int difficulty, String playerName) {
+    public GameOverPanel(int score, int gameMode, int difficulty, String playerName, String title) {
         this.score = score;
         this.gameMode = gameMode;
         this.difficulty = difficulty;
         this.playerName = playerName;
+        this.title = title;
         
         setOpaque(false); 
         setLayout(null);
@@ -51,7 +56,7 @@ public class GameOverPanel extends JPanel {
     }
     
     private void createButtons() {
-        int panelWidth = 300, buttonSize = 50, buttonY = 130, gap = 40;
+        int panelWidth = 300, buttonSize = 50, buttonY = 120, gap = 40;
         
         JButton homeBtn = createImageButton(homeButtonImage, "HOME");
         homeBtn.setBounds((panelWidth / 2) - buttonSize - (gap / 2), buttonY, buttonSize, buttonSize);
@@ -114,7 +119,7 @@ public class GameOverPanel extends JPanel {
         
         g2d.setFont(new Font("Arial", Font.BOLD, 28));
         g2d.setColor(Color.WHITE);
-        String gameOverText = "GAME OVER";
+        String gameOverText = title;
         int textX = (panelWidth - g2d.getFontMetrics().stringWidth(gameOverText)) / 2;
         g2d.drawString(gameOverText, textX, 45);
         

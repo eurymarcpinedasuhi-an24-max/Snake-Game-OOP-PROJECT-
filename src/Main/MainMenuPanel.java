@@ -50,7 +50,7 @@ public class MainMenuPanel extends JPanel {
         int buttonWidth = 200;
         int buttonHeight = 50;
         int buttonX = (PANEL_WIDTH - buttonWidth) / 2; // Center horizontally
-        int startY = 240;  // Starting Y position for first button
+        int startY = 220;  // Starting Y position for first button
         int spacing = 65;  // Vertical spacing between buttons
         
         // Play Button
@@ -78,12 +78,7 @@ public class MainMenuPanel extends JPanel {
         add(exitButton);
     }
     
-    /**
-     * Handler for Play button click event.
-     * Should start a new game session.
-     * 
-     * @param e Action event triggered by button click
-     */
+    // Handler for Play button click event.
     private void onPlayClicked(ActionEvent e) {
         System.out.println("Play button clicked!");
 
@@ -98,7 +93,6 @@ public class MainMenuPanel extends JPanel {
         parentFrame.repaint();
         
         /** System.out.println("Play button clicked!");
-        // 
 
         JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this); // Parent JFrame
         parentFrame.getContentPane().removeAll(); // Clearing current panel
@@ -112,14 +106,9 @@ public class MainMenuPanel extends JPanel {
 
     }
     
-    /**
-     * Handler for Options button click event.
-     * Should display game settings and configuration options.
-     * 
-     * @param e Action event triggered by button click
-     */
+    // Handler for Options button click event.
     private void onOptionsClicked(ActionEvent e) {
-        System.out.println("Options button clicked!");
+        System.out.println("Continue button clicked!");
         
         
         
@@ -139,44 +128,31 @@ public class MainMenuPanel extends JPanel {
         gamePanel.requestFocusInWindow();
     }
     
-    /**
-     * Handler for Score button click event.
-     * Should display the high scores or leaderboard.
-     * 
-     * @param e Action event triggered by button click
-     */
+    // Handler for Option button click event.
     private void onScoreClicked(ActionEvent e) {
         System.out.println("Score button clicked!");
-        // TODO: Score menu
 
         JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
         frame.getContentPane().removeAll();
+
+        // TODO: Migrate scoreboard panel to package Main
         frame.add(new GameModes.ScoreBoardPanel());
         frame.revalidate();
         frame.repaint();
     }
     
-    /**
-     * Handler for Exit button click event.
-     * Terminates the application.
-     * 
-     * @param e Action event triggered by button click
-     */
+    // Handler for Exit button click event.
     private void onExitClicked(ActionEvent e) {
         System.out.println("Exit button clicked!");
         System.exit(0);  // Exit the application
     }
     
-    /**
-     * Custom method to render the panel.
-     * 
-     * @param g The Graphics object used for drawing
-     */
+    // Custom painting for bg and title. Looks cool
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
-        // Enable antialiasing for smoother graphics
+        // Enable antialiasing for smoother graphics, no noticeable difference(?)
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         
         // Draw background image or fallback color
@@ -193,18 +169,19 @@ public class MainMenuPanel extends JPanel {
             int boardWidth = 650;
             int boardHeight = 550;
             int boardX = (PANEL_WIDTH - boardWidth) / 2;  // Center horizontally
-            int boardY = 50;  // Position from top
+            int boardY = 25;  // Position from top
             g2d.drawImage(boardImage, boardX, boardY, boardWidth, boardHeight, null);
         }
         
-        // Draw game title with shadow effect (TO BE REPLACED WITH IMAGE LATER)
+        // Draw game title with shadow effect (TODO:  BE REPLACED WITH IMAGE LATER)
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        g2d.setFont(new Font("Arial", Font.BOLD, 50));
+        g2d.setFont(new Font("Arial", Font.BOLD, 49));
         g2d.setColor(new Color(255, 215, 100));
         String title = "SNAKE JAVA";
         FontMetrics fm = g2d.getFontMetrics();
-        int titleX = (PANEL_WIDTH - fm.stringWidth(title)) / 2;  // How to center a title
-        int titleY = 180;
+        int titleX = (PANEL_WIDTH - fm.stringWidth(title)) / 2; 
+        int titleY = 125;
+
         
         // Draw shadow for 3D effect
         g2d.setColor(new Color(80, 40, 20));
@@ -213,5 +190,15 @@ public class MainMenuPanel extends JPanel {
         // Draw main title text
         g2d.setColor(new Color(255, 215, 100));
         g2d.drawString(title, titleX, titleY);
+
+        String subtitle = "for OOP:)";
+        FontMetrics fm2 = g2d.getFontMetrics();
+        int subtitleX = ((PANEL_WIDTH - fm2.stringWidth(subtitle)) / 2) + 60;
+        int subtitleY = 155;
+        g2d.setFont(new Font("Arial", Font.BOLD, 24));
+        g2d.setColor(new Color(80, 40, 20));
+        g2d.drawString(subtitle, subtitleX + 3, subtitleY + 3);
+        g2d.setColor(new Color(255, 215, 100));
+        g2d.drawString(subtitle, subtitleX, subtitleY);
     }
 }

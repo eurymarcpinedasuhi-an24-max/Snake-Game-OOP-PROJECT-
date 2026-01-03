@@ -23,12 +23,12 @@ public class ConfigurationPanel extends JPanel {
     private BufferedImage rightArrowImage;
     
     // Game mode stuff
-    private String[] gameModes = {"CLASSIC", "WALLS", "OBJECTS", "IMPOSTOR"};
+    private String[] gameModes = {"CLASSIC", "WALLS", "OBJECTS", "MAZE"};
     private String[] modeDescriptions = {
         "Standard Snake",
         "Extra walls and obstacles!",
         "Poison Apples (purple) = -1 length",
-        "Some food are fake!"
+        "Super Difficult Tight Maze!"
     };
     private Color[] modeColors = {
         new Color(76, 175, 80),   // Green
@@ -264,7 +264,7 @@ private void updateModeButtons() {
         JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
         frame.getContentPane().removeAll();
         
-        GamePanel gamePanel = new GamePanel(selectedMode, selectedDifficulty + 1, playerName);
+        GamePanel gamePanel = new GamePanel(selectedMode, selectedDifficulty, playerName);
         frame.add(gamePanel);
         
         frame.revalidate();
@@ -310,17 +310,22 @@ private void updateModeButtons() {
         g2d.setColor(new Color(255, 215, 100));
         g2d.setFont(new Font("Arial", Font.BOLD, 28));
         g2d.drawString("CONFIGURE YOUR GAME", 225, 69);
-       
- 
         
         
         // Draw "Game Mode:" text
+        g2d.setColor(new Color(80, 40, 20));
+        g2d.setFont(new Font("Arial", Font.BOLD, 18));
+        g2d.drawString("Game Mode: " + gameModes[selectedMode], 240 + 2 , 115 + 2);
+        g2d.setColor(new Color(255, 215, 100));
         g2d.setFont(new Font("Arial", Font.BOLD, 18));
         g2d.drawString("Game Mode: " + gameModes[selectedMode], 240, 115);
         
         // Draw "Difficulty:" text
         int diffY = 125 + 4 * (55 + 8) + 30;
+        g2d.setColor(new Color(80, 40, 20));
         g2d.drawString("Difficulty:", 250, diffY - 10);
+        g2d.setColor(new Color(255, 215, 100));
+        g2d.drawString("Difficulty:", 247, diffY - 12);
         
         // Draw label background for difficulty
         int labelX = 270;

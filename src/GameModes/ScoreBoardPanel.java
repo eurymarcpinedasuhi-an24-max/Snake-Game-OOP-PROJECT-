@@ -1,8 +1,6 @@
 package GameModes;
 
 import Main.MainMenuPanel;
-import Main.MenuButton;
-import GameModes.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -43,15 +41,25 @@ public class ScoreBoardPanel extends JPanel { // INHERITANCE: runtime polymorphi
     }
     
     private void createButtons() { // ENCAPSULATION: button creation details hidden
-        MenuButton homeButton = new MenuButton("resources/images/homebutton.png");
-        homeButton.setBounds(300, 520, 50, 50);
+        JButton homeButton = new JButton("Back to Home"); // TODO: CHANGE TO BUTTON
+        homeButton.setBounds(250, 501, 130, 40);
+        homeButton.setFont(new Font("Arial", Font.BOLD, 12));
+        homeButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        homeButton.setBorder(BorderFactory.createLineBorder(Color.BLACK,1));
+        homeButton.setBackground(new Color (0, 200, 0));
+        homeButton.setForeground(Color.WHITE);
         homeButton.addActionListener(e -> goBack());
-        add(homeButton);
-        
+
+        add(homeButton) ;
+
+
         JButton clearButton = new JButton("Clear Scores"); // TODO: CHANGE TO BUTTON
-        clearButton.setBounds(420, 525, 130, 40);
+        clearButton.setBounds(420, 501, 130, 40);
         clearButton.setFont(new Font("Arial", Font.BOLD, 12));
         clearButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        clearButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+        clearButton.setBackground(new Color (200, 0, 0));
+        clearButton.setForeground(Color.WHITE);
         clearButton.addActionListener(e -> clearScores()); // Clearing is handled by ScoreManager
         add(clearButton);
     }
@@ -96,9 +104,9 @@ public class ScoreBoardPanel extends JPanel { // INHERITANCE: runtime polymorphi
         
         g2d.setColor(new Color(80, 40, 20));
         g2d.setFont(new Font("Arial", Font.BOLD, 36));
-        g2d.drawString("HIGH SCORES", 283, 106);
+        g2d.drawString("HIGH SCORES", 283, 116);
         g2d.setColor(new Color(255, 215, 100));
-        g2d.drawString("HIGH SCORES", 280, 103);
+        g2d.drawString("HIGH SCORES", 280, 113);
         
         ScoreEntry[] scores = ScoreManager.loadScores();
         int entryY = 130, entryHeight = 65, entryWidth = 300;
@@ -117,17 +125,34 @@ public class ScoreBoardPanel extends JPanel { // INHERITANCE: runtime polymorphi
             Color textColor = (i == 0) ? goldColor : (i == 1) ? silverColor : (i == 2) ? bronzeColor : Color.WHITE;
             String rank = (i == 0) ? "1st" : (i == 1) ? "2nd" : (i == 2) ? "3rd" : "#" + (i + 1);
             
-            g2d.setColor(textColor);
+            // Draw rank with outline
             g2d.setFont(new Font("Arial", Font.BOLD, 24));
-            g2d.drawString(rank, entryX + 20, y + 42);
+            drawOutlinedText(g2d, rank, entryX + 20, y + 42, textColor);
             
             g2d.setFont(new Font("Arial", Font.BOLD, 20));
             String name = scores[i].name.length() > 15 ? scores[i].name.substring(0, 15) + "..." : scores[i].name;
-            g2d.drawString(name, entryX + 80, y + 42);
             
+            // Draw name with outline
+            drawOutlinedText(g2d, name, entryX + 80, y + 42, textColor);
+            
+            // Draw score with outline
             String scoreText = String.valueOf(scores[i].score);
             int scoreWidth = g2d.getFontMetrics().stringWidth(scoreText);
-            g2d.drawString(scoreText, entryX + entryWidth - scoreWidth - 30, y + 42);
+            drawOutlinedText(g2d, scoreText, entryX + entryWidth - scoreWidth - 30, y + 42, textColor);
         }
+    }
+    private void drawOutlinedText(Graphics2D g2d, String text, int x, int y, Color fillColor) {
+        // Draw outline by drawing text in all 8 directions
+        g2d.setColor(new Color(0, 0, 0, 80));
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                if (dx != 0 || dy != 0) {
+                    g2d.drawString(text, x + dx, y + dy);
+                }
+            }
+        }
+        // Draw main text on top
+        g2d.setColor(fillColor);
+        g2d.drawString(text, x, y);
     }
 }

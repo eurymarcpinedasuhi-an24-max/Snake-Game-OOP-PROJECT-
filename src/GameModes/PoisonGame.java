@@ -38,7 +38,7 @@ public class PoisonGame extends GameMode{
     
     @Override
     public void startGame(){
-        int delay = (int)(1000 / (Math.pow(diff, 1.5))); // milliseconds
+        int delay = (int)(500 / (Math.pow(diff, 1.5))); // milliseconds
 
         gameLoop = new Timer(delay, e -> {
             update();
@@ -50,8 +50,7 @@ public class PoisonGame extends GameMode{
     @Override
     public void update(){
         map.snake.moveSnake(direction);
-        score += map.snake.addScore;
-        map.snake.addScore = 0;
+        addScore();
         
         if (map.snake.defeat) {          // check defeat flag
             System.out.println("Game Over!");

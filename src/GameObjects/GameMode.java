@@ -67,9 +67,13 @@ public abstract class GameMode {
     public void addScore() {
         if (map.snake.addScore != 0) {
             int baseScore = map.snake.addScore;
-            int multipliedScore = (int)(baseScore * MODE_MULTIPLIERS[gameMode]);
+            int multipliedScore = (int)(baseScore * MODE_MULTIPLIERS[gameMode] * DIFFICULTY[diff]);
             this.score += multipliedScore;
             map.snake.addScore = 0;
         }
+    }
+
+    public int getScore() {
+        return this.score;
     }
 }

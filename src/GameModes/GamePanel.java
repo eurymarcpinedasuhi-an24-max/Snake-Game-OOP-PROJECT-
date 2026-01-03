@@ -20,8 +20,8 @@ import java.io.InputStream;
 public class GamePanel extends JPanel {
 
     private static final int MAXX = 20, MAXY = 20, TILE_SIZE = 20;
-    private static final int GAME_WIDTH = MAXX * TILE_SIZE;  // 400
-    private static final int GAME_HEIGHT = MAXY * TILE_SIZE; // 400
+    private static final int GAME_WIDTH = MAXX * TILE_SIZE  ;  // 400
+    private static final int GAME_HEIGHT = MAXY * TILE_SIZE ; // 400
     private static final int PANEL_WIDTH = 800;
     private static final int PANEL_HEIGHT = 600;
 
@@ -33,6 +33,7 @@ public class GamePanel extends JPanel {
 
     // Background frame image
     private BufferedImage frameImage;
+    private BufferedImage backgroundImage;
     
     private int offsetX;
     private int offsetY;
@@ -98,6 +99,10 @@ public class GamePanel extends JPanel {
             if (frameStream != null) {
                 frameImage = ImageIO.read(frameStream);
             }
+            InputStream bgStream = getClass().getResourceAsStream("/resources/images/background.png");
+            if (bgStream != null) {
+                backgroundImage = ImageIO.read(bgStream);
+            }
         } catch (IOException e) {
             System.err.println("Error loading frame image");
             e.printStackTrace();
@@ -110,18 +115,51 @@ public class GamePanel extends JPanel {
         
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        if (backgroundImage != null) {
+            g.drawImage(backgroundImage, 0, 0, PANEL_WIDTH, PANEL_HEIGHT, null);
+        } else {
+            g.setColor(new Color(139, 90, 43)); // Fallback brown color
+            g.fillRect(0, 0, PANEL_WIDTH, PANEL_HEIGHT);
+        }
         
+
         // Draw background frame image FIRST (behind everything)
         if (frameImage != null) {
             // Draw frame to cover the entire game area with some padding for the border
-            int frameMargin = 30;
+            int frameMargin = 85;
             g2d.drawImage(frameImage, 
                 offsetX - frameMargin, 
-                offsetY - frameMargin, 
+                offsetY - frameMargin - 5, 
                 GAME_WIDTH + frameMargin * 2, 
                 GAME_HEIGHT + frameMargin * 2, 
                 null);
         }
+        // Score Counter
+        g2d.setFont(new Font("Arial", Font.BOLD, 24));
+        String scoreText = "Score: " + game.getScore();
+
+        // Shadow for better visibility
+        g2d.setColor(new Color(0, 0, 0, 150));
+        g2d.drawString(scoreText, offsetX -40 + 2, offsetY - 15 + 2);
+    
+        // Draw main text
+        g2d.setColor(new Color(255, 255, 255));
+        g2d.drawString(scoreText, offsetX - 40, offsetY - 15);
+        // Game Mode and Difficulty Display
+        String modeText = switch (gameMode) {
+            case 0 -> "Mode: Classic";
+            case 1 -> "Mode: Walls";
+            case 2 -> "Mode: Poison";
+            case 3 -> "Mode: Obstacles";
+            default -> "Mode: Classic";
+        } + " | Difficulty: " + (difficulty + 1);
+        // Shadow
+        g2d.setColor(new Color(0, 0, 0, 150));
+        g2d.drawString(modeText, offsetX -40 + 2, offsetY - 45 + 2);
+        // Main text
+        g2d.setColor(new Color(255, 255, 255));
+        g2d.drawString(modeText, offsetX - 40, offsetY - 45);
         
         // 1️⃣ Draw map (translated to center)
         for (int y = 0; y < MAXY; y++) {
@@ -209,6 +247,8 @@ public class GamePanel extends JPanel {
         g2d.setColor(new Color(0, 80, 0));
         g2d.setStroke(new BasicStroke(3));
         g2d.drawRect(offsetX - 1, offsetY - 1, GAME_WIDTH + 2, GAME_HEIGHT + 2);
+        
+        
     }
     
     private void setupKeyBindings() {
@@ -226,6 +266,9 @@ public class GamePanel extends JPanel {
         im.put(KeyStroke.getKeyStroke("pressed S"), "down");
         im.put(KeyStroke.getKeyStroke("pressed A"), "left");
         im.put(KeyStroke.getKeyStroke("pressed D"), "right");
+
+        // ESC key for pause menu
+        im.put(KeyStroke.getKeyStroke("pressed ESCAPE"), "escape");
 
         am.put("up", new AbstractAction() {
             @Override
@@ -252,8 +295,48 @@ public class GamePanel extends JPanel {
             }
         });
 
+        am.put("escape", new AbstractAction() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                togglePauseMenu();
+            }
+        });
+
         // Ensure panel has focus
         SwingUtilities.invokeLater(() -> requestFocusInWindow());
+    }
+
+    private boolean isPaused = false;
+
+    private void togglePauseMenu() {
+        if (gameOver) return; // Don't toggle if actual game over
+        
+        if (isPaused) {
+            // Resume game
+            if (gameOverPanel != null) {
+                remove(gameOverPanel);
+                gameOverPanel = null;
+            }
+            game.gameLoop.start();
+            isPaused = false;
+        } else {
+            // Pause game
+            game.gameLoop.stop();
+            gameOverPanel = new GameOverPanel(game.getScore(), gameMode, difficulty, playerName, "PAUSED");
+            int panelWidth = 300;
+            int panelHeight = 200;
+            int x = (getWidth() - panelWidth) / 2;
+            int y = (getHeight() - panelHeight) / 2;
+            
+            if (x <= 0) x = (800 - panelWidth) / 2;
+            if (y <= 0) y = (600 - panelHeight) / 2;
+            
+            gameOverPanel.setBounds(x, y, panelWidth, panelHeight);
+            add(gameOverPanel);
+            isPaused = true;
+        }
+        revalidate();
+        repaint();
     }
 
     public void showGameOver(int score) {
