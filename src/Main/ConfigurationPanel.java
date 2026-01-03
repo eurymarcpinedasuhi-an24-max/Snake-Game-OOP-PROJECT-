@@ -128,7 +128,7 @@ public class ConfigurationPanel extends JPanel {
 
         // Start button
         MenuButton startBtn = new MenuButton("resources/images/continue.png");
-        startBtn.setBounds(300, diffY + 70, 200, 45);
+        startBtn.setBounds(300, diffY + 130, 200, 45);
         startBtn.addActionListener(e -> startGame());
         add(startBtn);
     }
