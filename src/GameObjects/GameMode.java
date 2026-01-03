@@ -30,6 +30,9 @@ public abstract class GameMode {
     
     // Used when loading a saved game
     public void loadGame(SaveManager.SaveData save){
+        if(save.isEmpty)
+            return;
+        
         this.diff = save.difficulty;
         this.score = save.score;
         this.direction = save.direction;
@@ -83,5 +86,10 @@ public abstract class GameMode {
     // Getter for the score
     public int getScore() {
         return this.score;
+    }
+    
+    // Getter for the direction
+    public Direction getDir(){
+        return direction;
     }
 }

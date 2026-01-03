@@ -110,17 +110,18 @@ public class MainMenuPanel extends JPanel {
     private void onOptionsClicked(ActionEvent e) {
         System.out.println("Continue button clicked!");
         
-        
-        
-        /**
-         * Please help fix this 
-         */
         System.out.println("Continue game!");
         
         JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
         frame.getContentPane().removeAll();
         
         GamePanel gamePanel = new GamePanel();
+        
+        if(gamePanel.isGameOver()){
+            System.out.println("No Saved Game, Reason: " + GamePanel.reason);
+            return;
+        }
+        
         frame.add(gamePanel);
         
         frame.revalidate();

@@ -36,7 +36,7 @@ public class ClassicGame extends GameMode{
     
     @Override
     public void startGame(){
-        int delay = (int)(500 / (Math.pow(diff, 1.5))); // milliseconds
+        int delay = (int)(500 / diff); // milliseconds
 
         gameLoop = new Timer(delay, e -> {
             update();

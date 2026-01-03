@@ -30,6 +30,7 @@ public class GamePanel extends JPanel {
     private int difficulty;
     private GameOverPanel gameOverPanel;
     private boolean gameOver = false;
+    public static String reason = "None";
 
     // Background frame image
     private BufferedImage frameImage;
@@ -45,60 +46,59 @@ public class GamePanel extends JPanel {
     }
     
     // Start game with a name
-    public GamePanel(int gameMode, int difficulty, String playerName) {
-        this.gameMode = gameMode;
-        this.difficulty = difficulty;
-        this.playerName = playerName;
-        
-        // Polymorphize GameMode to each subclasses
-        this.game = switch(gameMode) {
-            case 0 -> new ClassicGame(difficulty);
-            case 1 -> new WallGame(difficulty);
-            case 2 -> new PoisonGame(difficulty);
-            case 3 -> new ObstacledGame(difficulty);
-            default -> new ClassicGame(difficulty);
-        };
-        game.setPanel(this);
-        
-        setPreferredSize(new Dimension(800, 600));
-        setBackground(Color.BLACK);
-        setFocusable(true);
-        setLayout(null); // Allow absolute positioning for overlay
+    public GamePanel(int gameMode, int difficulty, String playerName) { 
+        //handles if there's no save file
+        if(gameMode < 0 || difficulty < 0){
+            this.gameOver = true;
+            this.game = null;
+        }
+        else {
+            this.gameMode = gameMode;
+            this.difficulty = difficulty;
+            this.playerName = playerName;
 
-        // Offsets to center the game. Change this if want to resizable feature
-        offsetX = (PANEL_WIDTH - GAME_WIDTH) / 2;
-        offsetY = (PANEL_HEIGHT - GAME_HEIGHT) / 2;
-        
-        loadImages();
-        setupKeyBindings();
-        game.startGame();
-        System.out.println("Game started with Mode: " + gameMode + " Difficulty: " + difficulty + " Player: " + playerName);
+            // Polymorphize GameMode to each subclasses
+            this.game = switch(gameMode) {
+                case 0 -> new ClassicGame(difficulty);
+                case 1 -> new WallGame(difficulty);
+                case 2 -> new PoisonGame(difficulty);
+                case 3 -> new ObstacledGame(difficulty);
+                default -> new ClassicGame(difficulty);
+            };
+            game.setPanel(this);
+
+            setPreferredSize(new Dimension(800, 600));
+            setBackground(Color.BLACK);
+            setFocusable(true);
+            setLayout(null); // Allow absolute positioning for overlay
+
+            // Offsets to center the game. Change this if want to resizable feature
+            offsetX = (PANEL_WIDTH - GAME_WIDTH) / 2;
+            offsetY = (PANEL_HEIGHT - GAME_HEIGHT) / 2;
+
+            loadImages();
+            setupKeyBindings();
+            game.startGame();
+            System.out.println("Game started with Mode: " + gameMode + " Difficulty: " + difficulty + " Player: " + playerName);
+        }
     }
     
     // Load game
     public GamePanel(){
         SaveManager.SaveData save;
+        save = SaveManager.loadGame();
         
-        try {
-          save = SaveManager.loadGame();
-          // To do: notify that there is no save and goes back to main menu
-          // if (save.isEmpty)
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Failed to load map!");
-            Point[] spawnPoint = {
-                new Point(10, 10),
-                new Point(9, 10),
-                new Point(8, 10),
-                new Point(7, 10),
-                new Point(6, 10)
-            };
-            save = new SaveManager.SaveData(1, 1, 0, Direction.RIGHT, spawnPoint, new Point(1, 1), null, "Player");
+        //if there is no save
+        if(save.isEmpty){
+            save.mode = -1;
+            save.difficulty = -1;
+            reason = save.reason;
         }
         
-        this(save.mode, save.difficulty);
-        this.game.loadGame(save);
+        this(save.mode, save.difficulty, save.name);
+        
+        if(this.game != null)
+            this.game.loadGame(save);        
     }
 
     // Load images from resources
@@ -146,7 +146,7 @@ public class GamePanel extends JPanel {
         }
         // Score Counter
         g2d.setFont(new Font("Arial", Font.BOLD, 24));
-        String scoreText = "Score: " + game.getScore();
+        String scoreText = "Score: " + game.getScore() + " | Press ESC/SPACE to Pause";
 
         // Shadow for better visibility
         g2d.setColor(new Color(0, 0, 0, 150));
@@ -162,7 +162,7 @@ public class GamePanel extends JPanel {
             case 2 -> "Mode: Poison";
             case 3 -> "Mode: Obstacles";
             default -> "Mode: Classic";
-        } + " | Difficulty: " + (difficulty);
+        } + " | Difficulty: " + (difficulty) + " | Player: " + (playerName);
         // Shadow
         g2d.setColor(new Color(0, 0, 0, 150));
         g2d.drawString(modeText, offsetX -40 + 2, offsetY - 45 + 2);
@@ -276,8 +276,9 @@ public class GamePanel extends JPanel {
         im.put(KeyStroke.getKeyStroke("pressed A"), "left");
         im.put(KeyStroke.getKeyStroke("pressed D"), "right");
 
-        // ESC key for pause menu
+        // ESC/SPACE key for pause menu
         im.put(KeyStroke.getKeyStroke("pressed ESCAPE"), "escape");
+        im.put(KeyStroke.getKeyStroke("pressed SPACE"), "escape");
 
         am.put("up", new AbstractAction() {
             @Override
@@ -332,6 +333,7 @@ public class GamePanel extends JPanel {
             // Pause game
             game.gameLoop.stop();
             gameOverPanel = new GameOverPanel(game.getScore(), gameMode, difficulty, playerName, "PAUSED");
+            gameOverPanel.panel = this;
             int panelWidth = 300;
             int panelHeight = 200;
             int x = (getWidth() - panelWidth) / 2;
@@ -369,4 +371,27 @@ public class GamePanel extends JPanel {
         repaint();
     }
 
+    public boolean saveGame(){
+        SaveManager.SaveData save = new SaveManager.SaveData(
+            gameMode, 
+            difficulty, 
+            game.getScore(), 
+            game.getDir(), 
+            game.map.snake.coordinates(),
+            game.map.fruitCoord(),
+            gameMode != 2? null: game.map.poisonCoord(),
+            playerName);
+        
+        try{
+            SaveManager.saveGame(save);
+            return true;
+        }
+        catch(IOException e){
+            return false;
+        }
+    }
+    
+    public boolean isGameOver(){
+        return gameOver;
+    }
 }

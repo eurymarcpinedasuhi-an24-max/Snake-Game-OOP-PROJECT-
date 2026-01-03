@@ -25,6 +25,7 @@ public class SaveManager {
         public Point poison; // nullable
 
         public boolean isEmpty = false;
+        public String reason; 
         
         SaveData(int mode, int difficulty, int score, Direction direction, Point[] point, Point fruit, Point poison, String name){
             this.name = name;
@@ -40,12 +41,13 @@ public class SaveManager {
         // Empty constructor
         SaveData(){
             isEmpty = true;
+            reason = "Empty Constructor";
         }
     }
     
     // Save game from a SaveData object
     public static void saveGame(SaveData save) throws IOException {
-        File file = new File(System.getProperty("user.home"), "save.txt");
+        File file = new File("src/GameModes/save.txt");
 
         try (PrintWriter pw = new PrintWriter(new FileWriter(file))) {
             pw.println("name=" + save.name);
@@ -76,45 +78,41 @@ public class SaveManager {
     }
     
     // Load game and returns a SaveData object
-    public static SaveData loadGame() throws IOException {
+    public static SaveData loadGame() {
         SaveData data = new SaveData();
+        Boolean hasData = false;
+        data.isEmpty = false;
 
         InputStream is = SaveManager.class.getResourceAsStream("/GameModes/save.txt");
 
         if (is == null) {
             System.out.println("save.txt not found in resources!");
-            return data;
-        }
-
-        if (is.available() == 0) {
-            System.out.println("save.txt is empty!");
+            data.isEmpty = true;
+            data.reason = "Missing File";
             return data;
         }
 
         try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
             String line;
+
             while ((line = br.readLine()) != null) {
+                hasData = true;
 
                 if (line.startsWith("name=")) {
                     data.name = line.substring(5);
                 }
-
                 else if (line.startsWith("mode=")) {
                     data.mode = Integer.parseInt(line.substring(5));
                 }
-
                 else if (line.startsWith("difficulty=")) {
                     data.difficulty = Integer.parseInt(line.substring(11));
                 }
-
                 else if (line.startsWith("score=")) {
                     data.score = Integer.parseInt(line.substring(6));
                 }
-                
                 else if (line.startsWith("direction=")) {
                     data.direction = Direction.valueOf(line.substring(10));
                 }
-
                 else if (line.startsWith("snake=")) {
                     String[] parts = line.substring(6).split(";");
                     List<Point> points = new ArrayList<>();
@@ -129,7 +127,6 @@ public class SaveManager {
                     }
                     data.snake = points.toArray(new Point[0]);
                 }
-
                 else if (line.startsWith("fruit=")) {
                     String[] xy = line.substring(6).split(",");
                     data.fruit = new Point(
@@ -137,7 +134,6 @@ public class SaveManager {
                             Integer.parseInt(xy[1])
                     );
                 }
-
                 else if (line.startsWith("poison=")) {
                     String[] xy = line.substring(7).split(",");
                     data.poison = new Point(
@@ -146,8 +142,34 @@ public class SaveManager {
                     );
                 }
             }
-        }
 
+        } catch (IOException | IllegalArgumentException e) {
+            // IllegalArgumentException catches enum/valueOf & parse errors
+            System.out.println("Failed to load save file.");
+            e.printStackTrace();
+            data.isEmpty = true;
+            data.reason = "Error: " + e;
+        }
+        
+        if (!dataCheck(data)){
+            data.isEmpty = true;
+            data.reason = "Incomplete Data";
+        }
+        
+        if (!hasData){
+            data.isEmpty = true;
+            data.reason = "No Data";
+        }
+        
         return data;
+    }
+    
+    private static boolean dataCheck(SaveData save){
+        return !(save.name == null || 
+                (save.mode < 0 || save.mode > 3) || 
+                (save.difficulty < 0 || save.difficulty > 3) ||
+                save.direction == null || 
+                save.snake == null || 
+                save.fruit == null);
     }
 }

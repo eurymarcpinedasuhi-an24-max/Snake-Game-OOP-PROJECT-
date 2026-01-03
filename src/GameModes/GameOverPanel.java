@@ -13,7 +13,10 @@ public class GameOverPanel extends JPanel {
     private BufferedImage labelImage, homeButtonImage, retryButtonImage;
     private int score, gameMode, difficulty;
     private String playerName, title;
+    public boolean isPause = false;
+    public GamePanel panel;
 
+    // Game Over
     public GameOverPanel(int score, int gameMode, int difficulty, String playername) {
         this(score, gameMode, difficulty, playername, "GAME OVER");
     }
@@ -24,6 +27,9 @@ public class GameOverPanel extends JPanel {
         this.difficulty = difficulty;
         this.playerName = playerName;
         this.title = title;
+        
+        if (title.equals("PAUSED"))
+            this.isPause = true;
         
         setOpaque(false); 
         setLayout(null);
@@ -85,6 +91,9 @@ public class GameOverPanel extends JPanel {
     }
     
     private void goToMainMenu() {
+        if(isPause){
+            panel.saveGame();
+        }
         JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
         frame.getContentPane().removeAll();
         frame.add(new MainMenuPanel());
