@@ -18,7 +18,6 @@ public abstract class GameMode {
     protected GamePanel panel;
     public Map map;
     
-    public double[] DIFFICULTY = {1.0, 2.0, 3.0, 4.0};
     public double[] MODE_MULTIPLIERS = {1.0, 1.25, 1.5, 2.0};
     protected Direction direction;
     protected int diff;

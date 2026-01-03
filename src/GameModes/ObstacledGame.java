@@ -15,11 +15,11 @@ import javax.swing.Timer;
 public class ObstacledGame extends GameMode{
     
     final public Point[] spawnPoint = {
-        new Point(10, 10),
-        new Point(9, 10),
-        new Point(8, 10),
-        new Point(7, 10),
-        new Point(6, 10)
+        new Point(10, 11),
+        new Point(9, 11),
+        new Point(8, 11),
+        new Point(7, 11),
+        new Point(6, 11)
     };
     
     public ObstacledGame(int diff){
