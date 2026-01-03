@@ -201,7 +201,6 @@ private void updateModeButtons() {
      private JButton createArrowButton(BufferedImage image, int direction) {
         JButton button = new JButton();
         
-        //TODO add actual arrow images. Name: LeftArrow.png and RightArrow.png
         if (image != null) {
             button.setIcon(new ImageIcon(image.getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
         } else {
@@ -218,11 +217,11 @@ private void updateModeButtons() {
             selectedDifficulty = selectedDifficulty + direction;
             
             // Wrap around basically
-            if (selectedDifficulty < 0) {
-                selectedDifficulty = 3;
+            if (selectedDifficulty > 1) {
+                selectedDifficulty = 4;
             }
-            if (selectedDifficulty > 3) {
-                selectedDifficulty = 0;
+            if (selectedDifficulty > 4) {
+                selectedDifficulty = 1;
             }
             
             updateDifficultyLabels();

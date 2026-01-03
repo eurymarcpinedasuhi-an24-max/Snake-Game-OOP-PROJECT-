@@ -20,13 +20,15 @@ public abstract class GameMode {
     
     public double[] MODE_MULTIPLIERS = {1.0, 1.25, 1.5, 2.0};
     public double[] DIFFICULTY = {1, 1.25, 1.5, 2.0};
+
     protected Direction direction;
     protected int diff;
     protected int score = 0;
-    protected int gameMode; 
+    protected int gameMode;
     
     public abstract void startGame();
     
+    // Used when loading a saved game
     public void loadGame(SaveManager.SaveData save){
         this.diff = save.difficulty;
         this.score = save.score;
@@ -38,32 +40,37 @@ public abstract class GameMode {
             this.map.setPoison(save.poison);
     }
     
+    // To update game logic and tells when the game ends
     public void update(){
         map.snake.moveSnake(direction);
         addScore();
         
         if (map.snake.defeat) {          // check defeat flag
             System.out.println("Game Over! Final Score: " + score);
-            gameLoop.stop();                 // stop the Timer/game loop
+            gameLoop.stop();             // stop the Timer/game loop
         }
     }
     
+    // To display the game
     protected void render() {
         if (panel != null) {
             panel.repaint();
         }
     }
     
+    // To set direction of the snake and disallow changing if it is the opposite of current direction
     public void setDirection(Direction newDir) {
-    if (!newDir.isOpposite(direction)) {
-        direction = newDir;
+        if (!newDir.isOpposite(direction)) {
+            direction = newDir;
+        }
     }
-}
     
+    // To get panel reference after being instantiated
     public void setPanel(GamePanel panel) {
         this.panel = panel;
     }
     
+    // To add score whenever there is a change(not 0) in snake.addScore
     public void addScore() {
         if (map.snake.addScore != 0) {
             int baseScore = map.snake.addScore;
@@ -73,6 +80,7 @@ public abstract class GameMode {
         }
     }
 
+    // Getter for the score
     public int getScore() {
         return this.score;
     }

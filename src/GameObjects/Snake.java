@@ -28,15 +28,17 @@ public class Snake {
         summon(spawnPoint);
     }
     
+    // Checks if snake will collide wall with next move
     private boolean collideWall(Point head, Map map){
         //if snake hits a wall
         return map.valueAtCoord(head.x, head.y) == 1;
     }
     
+    // Checks if snake will colide with itself with the next move
     private boolean collideSelf(Point head){
         Point[] copy = coordinates();
         
-        if(copy.length <= 1)
+        if(copy.length <= 4)    // 4 length snake gets in a cycle than getting out
             return false;
         
         for(int i = 0; i < copy.length - 1; i++)
@@ -46,12 +48,14 @@ public class Snake {
         return false;
     }
     
+    // Checks if snake will collide with a fruit at next move
     private boolean collideFruit(Point head, Map map){
         Point fruit = map.fruitCoord();
         
         return (fruit.x == head.x) && (fruit.y == head.y);
     }
     
+    // Checks if snake will collide with a poison at next move
     public boolean collidePoison(Point head, Map map){
         if(!map.isPoison())
             return false;
@@ -61,6 +65,7 @@ public class Snake {
         return (poison.x == head.x) && (poison.y == head.y);
     }
     
+    // Moves snake and perform actions based on that move
     public void moveSnake(final Direction direction){
         
         int dx = direction == Direction.LEFT? -1: (direction == Direction.RIGHT? 1: 0);
@@ -89,6 +94,7 @@ public class Snake {
         snake.removeLast();        // remove tail
     }
     
+    // Events in eating fruit: increase size and gain points, map generates a new fruit
     public void eatFruit(Point newHead){
         snake.addFirst(newHead);
         map.generateFruit();
@@ -96,6 +102,7 @@ public class Snake {
         length++;
     }
     
+    // Events in eating a Poison: decrease size and reduce points by 20, map generates another poison, also if snake's length is 1 and eats a poison then lose the game
     public void getPoisoned(Point newHead){
         if(!map.isPoison())
             return;
@@ -115,14 +122,17 @@ public class Snake {
         addScore = -20;
     }
     
+    // Getter for snake length
     public int getLength(){
         return this.length;
     }
     
+    // Checks if a snake is in a certain point
     public boolean pointCheck(Point point){
         return snake.contains(point);
     }
     
+    // Adds Snake body using a list of points for its body
     private void summon(Point[] coord){
         int lengthConstrict = 0;
         
@@ -134,6 +144,7 @@ public class Snake {
         }
     }
     
+    // Convert snake deque/linked list into a Point array
     public Point[] coordinates() {
         return snake.toArray(new Point[0]);
     }
