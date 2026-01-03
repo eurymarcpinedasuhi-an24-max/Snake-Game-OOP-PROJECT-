@@ -8,7 +8,7 @@ import javax.imageio.ImageIO;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class ScoreBoardPanel extends JPanel { // INHERITANCE: runtime polymorphism with JPanel via overriding
+public class ScoreBoardPanel extends JPanel {
     
     private static final int PANEL_WIDTH = 800;
     private static final int PANEL_HEIGHT = 600;

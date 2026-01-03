@@ -217,11 +217,11 @@ private void updateModeButtons() {
             selectedDifficulty = selectedDifficulty + direction;
             
             // Wrap around basically
-            if (selectedDifficulty > 1) {
-                selectedDifficulty = 4;
+            if (selectedDifficulty < 0) {
+                selectedDifficulty = 3;
             }
-            if (selectedDifficulty > 4) {
-                selectedDifficulty = 1;
+            if (selectedDifficulty > 3) {
+                selectedDifficulty = 0;
             }
             
             updateDifficultyLabels();
@@ -258,12 +258,12 @@ private void updateModeButtons() {
         System.out.println("Starting game!");
         System.out.println("Player: " + playerName);
         System.out.println("Mode: " + gameModes[selectedMode]);
-        System.out.println("Difficulty: " + difficulties[selectedDifficulty]);
+        System.out.println("Difficulty: " + (difficulties[selectedDifficulty] + 1));
         
         JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
         frame.getContentPane().removeAll();
         
-        GamePanel gamePanel = new GamePanel(selectedMode, selectedDifficulty, playerName);
+        GamePanel gamePanel = new GamePanel(selectedMode, selectedDifficulty + 1, playerName);
         frame.add(gamePanel);
         
         frame.revalidate();

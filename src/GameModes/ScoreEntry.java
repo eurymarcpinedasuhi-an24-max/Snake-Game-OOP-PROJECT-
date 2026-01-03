@@ -10,7 +10,7 @@ public class ScoreEntry {
         this.score = 0;
     }
     
-    // Polymorphism Constructor Overload
+    // Constructor Overload
     public ScoreEntry(String name, int score) {
         this.name = name;
         this.score = score;

@@ -39,15 +39,18 @@ public class GamePanel extends JPanel {
     private int offsetY;
     private String playerName = "Player";
 
+    // Start game with no name
     public GamePanel(int gameMode, int difficulty) {
         this(gameMode, difficulty, "Player");
     }
     
+    // Start game with a name
     public GamePanel(int gameMode, int difficulty, String playerName) {
         this.gameMode = gameMode;
         this.difficulty = difficulty;
         this.playerName = playerName;
         
+        // Polymorphize GameMode to each subclasses
         this.game = switch(gameMode) {
             case 0 -> new ClassicGame(difficulty);
             case 1 -> new WallGame(difficulty);
@@ -72,12 +75,16 @@ public class GamePanel extends JPanel {
         System.out.println("Game started with Mode: " + gameMode + " Difficulty: " + difficulty + " Player: " + playerName);
     }
     
+    // Load game
     public GamePanel(){
         SaveManager.SaveData save;
         
         try {
           save = SaveManager.loadGame();
-        } catch (IOException e) {
+          // To do: notify that there is no save and goes back to main menu
+          // if (save.isEmpty)
+        }
+        catch (IOException e) {
             e.printStackTrace();
             System.out.println("Failed to load map!");
             Point[] spawnPoint = {
@@ -87,12 +94,14 @@ public class GamePanel extends JPanel {
                 new Point(7, 10),
                 new Point(6, 10)
             };
-            save = new SaveManager.SaveData(1, 1, 0, Direction.RIGHT, spawnPoint, new Point(1, 1), null);
+            save = new SaveManager.SaveData(1, 1, 0, Direction.RIGHT, spawnPoint, new Point(1, 1), null, "Player");
         }
         
         this(save.mode, save.difficulty);
         this.game.loadGame(save);
     }
+
+    // Load images from resources
     private void loadImages() {
          try {
             InputStream frameStream = getClass().getResourceAsStream("/resources/images/gamepanel.png");
@@ -153,7 +162,7 @@ public class GamePanel extends JPanel {
             case 2 -> "Mode: Poison";
             case 3 -> "Mode: Obstacles";
             default -> "Mode: Classic";
-        } + " | Difficulty: " + (difficulty + 1);
+        } + " | Difficulty: " + (difficulty);
         // Shadow
         g2d.setColor(new Color(0, 0, 0, 150));
         g2d.drawString(modeText, offsetX -40 + 2, offsetY - 45 + 2);

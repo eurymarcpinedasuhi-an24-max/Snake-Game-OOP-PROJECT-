@@ -1,4 +1,5 @@
-mode=1
+name=TestName
+mode=2
 difficulty=2
 score=150
 direction=RIGHT

@@ -15,6 +15,7 @@ import java.awt.Point;
 public class SaveManager {
     
     public static class SaveData {
+        public String name;
         public int mode;
         public int difficulty;
         public int score;
@@ -22,8 +23,11 @@ public class SaveManager {
         public Point[] snake;
         public Point fruit;
         public Point poison; // nullable
+
+        public boolean isEmpty = false;
         
-        SaveData(int mode, int difficulty, int score, Direction direction, Point[] point, Point fruit, Point poison){
+        SaveData(int mode, int difficulty, int score, Direction direction, Point[] point, Point fruit, Point poison, String name){
+            this.name = name;
             this.mode = mode;
             this.difficulty = difficulty;
             this.score = score;
@@ -33,15 +37,18 @@ public class SaveManager {
             this.poison = poison;
         }
         
+        // Empty constructor
         SaveData(){
-            
+            isEmpty = true;
         }
     }
     
+    // Save game from a SaveData object
     public static void saveGame(SaveData save) throws IOException {
         File file = new File(System.getProperty("user.home"), "save.txt");
 
         try (PrintWriter pw = new PrintWriter(new FileWriter(file))) {
+            pw.println("name=" + save.name);
             pw.println("mode=" + save.mode);
             pw.println("difficulty=" + save.difficulty);
             pw.println("score=" + save.score);
@@ -68,6 +75,7 @@ public class SaveManager {
         }
     }
     
+    // Load game and returns a SaveData object
     public static SaveData loadGame() throws IOException {
         SaveData data = new SaveData();
 
@@ -78,11 +86,20 @@ public class SaveManager {
             return data;
         }
 
+        if (is.available() == 0) {
+            System.out.println("save.txt is empty!");
+            return data;
+        }
+
         try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
             String line;
             while ((line = br.readLine()) != null) {
 
-                if (line.startsWith("mode=")) {
+                if (line.startsWith("name=")) {
+                    data.name = line.substring(5);
+                }
+
+                else if (line.startsWith("mode=")) {
                     data.mode = Integer.parseInt(line.substring(5));
                 }
 
