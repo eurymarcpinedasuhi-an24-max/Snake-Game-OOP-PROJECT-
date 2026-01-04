@@ -112,15 +112,16 @@ public class MainMenuPanel extends JPanel {
         
         System.out.println("Continue game!");
         
-        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
-        frame.getContentPane().removeAll();
-        
+        //check if there's a valid continue before making any display changes
         GamePanel gamePanel = new GamePanel();
         
         if(gamePanel.isGameOver()){
             System.out.println("No Saved Game, Reason: " + GamePanel.reason);
             return;
         }
+
+        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+        frame.getContentPane().removeAll();
         
         frame.add(gamePanel);
         
