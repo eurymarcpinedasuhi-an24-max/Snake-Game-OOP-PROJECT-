@@ -63,7 +63,7 @@ public class ConfigurationPanel extends JPanel {
     }
     
     private void loadImages() {
-        try { //TODO: REHAUL WITH CLASS PATH RESOURCES  LIKE IN MAINMENUPANEL
+        try {
 
             InputStream backgroundImage = getClass().getResourceAsStream("/resources/images/background.png");
             InputStream boardImage = getClass().getResourceAsStream("/resources/images/board.png");
@@ -134,7 +134,7 @@ public class ConfigurationPanel extends JPanel {
     }
     
     private JButton createModeButton(int index) {
-        JButton button = new JButton() {  // Polymorphism / method override for custom painting 4 board. TODO: add separate images for each mode
+        JButton button = new JButton() {  // Polymorphism / method override for custom painting for board. Same with other panels
             @Override
             protected void paintComponent(Graphics g) {
                 if (labelImage != null) {
@@ -204,7 +204,7 @@ public class ConfigurationPanel extends JPanel {
     private JButton createArrowButton(BufferedImage image, int direction) {
         JButton button = new JButton();
         
-        if (image != null) {
+        if (image != null) { // Fallback
             button.setIcon(new ImageIcon(image.getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
         } else {
             button.setText(direction < 0 ? "<" : ">");
@@ -239,7 +239,7 @@ public class ConfigurationPanel extends JPanel {
         difficultyDescLabel.setText(diffSpeeds[selectedDifficulty] + " - " + diffMultipliers[selectedDifficulty] + "x Multiplier");
     }
 
-    // Start game itself. Nothing else to modify here.
+    // Start game 
     private void startGame() {
         // Ask for player name before starting
         String name = JOptionPane.showInputDialog(

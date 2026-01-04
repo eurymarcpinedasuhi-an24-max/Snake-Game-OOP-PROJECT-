@@ -62,11 +62,11 @@ public class ScoreManager {
     public static boolean addScore(String name, int score, int gameMode) {
         ScoreEntry[] scores = loadScores();
         
-        // Find position to insert =
-        int insertPos = -1;
+        // Find position to insert new score
+        int insertPos = -1; // -1 means not high enough
         for (int i = 0; i < MAX_SCORES; i++) {
-            if (score > scores[i].score) {
-                insertPos = i;
+            if (score > scores[i].score) { // Higher score found
+                insertPos = i; // Found position
                 break;
             }
         }
@@ -99,11 +99,5 @@ public class ScoreManager {
             emptyScores[i] = new ScoreEntry(); // Reset to "---", 0
         }
         saveScores(emptyScores);
-    }
-    
-    // Check if score qualifies for top 5
-    public static boolean isHighScore(int score) {
-        ScoreEntry[] scores = loadScores();
-        return score > scores[MAX_SCORES - 1].score; // Compare against lowest high score
     }
 }
