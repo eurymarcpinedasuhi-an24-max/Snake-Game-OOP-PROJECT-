@@ -167,7 +167,7 @@ public class SaveManager {
     private static boolean dataCheck(SaveData save){
         return !(save.name == null || 
                 (save.mode < 0 || save.mode > 3) || 
-                (save.difficulty < 0 || save.difficulty > 3) ||
+                (save.difficulty < 1 || save.difficulty > 4) ||
                 save.direction == null || 
                 save.snake == null || 
                 save.fruit == null);
