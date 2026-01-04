@@ -20,7 +20,7 @@ public class MainMenuPanel extends JPanel {
     private static final int PANEL_HEIGHT = 600;
 
 
-    //Constructor, sets panel size, layout, loads background and buttons
+    // Constructor, sets panel size, layout, loads background and buttons
     public MainMenuPanel() {
         setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
         setLayout(null); // Absolute positioning for custom placement
@@ -132,7 +132,7 @@ public class MainMenuPanel extends JPanel {
         System.exit(0);  // Exit the application
     }
     
-    // Custom painting for bg and title. Looks cool
+    // Custom painting for background and title
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

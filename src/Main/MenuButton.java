@@ -15,12 +15,7 @@ public class MenuButton extends JButton {
     // Flag to track if the mouse is hovering over the button
     private boolean isHovered = false;
     
-    /**
-     * Constructor creates a custom image-based button.
-     * Removes default Swing button styling and adds hover interaction.
-     * 
-     * @param imagePath The file path to the button image
-     */
+    // Abstraction: Constructor to create button with image from resources
     public MenuButton(String imagePath) {
         loadImage(imagePath);
         
@@ -36,7 +31,7 @@ public class MenuButton extends JButton {
         }
 
         // Add mouse listener to track hover state
-        addMouseListener(new MouseAdapter() {
+        addMouseListener(new MouseAdapter() { // Anonymous class for mouse events
             @Override
             public void mouseEntered(MouseEvent e) {
                 isHovered = true;
@@ -51,12 +46,7 @@ public class MenuButton extends JButton {
         });
     }
 
-    /**
-     * Loads the button image from the specified file path
-     * Prints an error message if the image cannot be loaded
-     * 
-     * @param path The file path to the button image
-     */
+    // Load button from resources
     private void loadImage(String path) {
         try { // Load image from resources
             String resourcePath = "/" + path;
@@ -72,12 +62,7 @@ public class MenuButton extends JButton {
         }
     }
 
-    /**
-     * Custom painting method that renders the button image with optional hover effect
-     * Applies transparency when hovered for visual feedback
-     * 
-     * @param g The Graphics object used for drawing
-     */
+    // Custom painting to draw button with hover effect
     @Override
     protected void paintComponent(Graphics g) {
         if (buttonImage != null) {

@@ -19,6 +19,7 @@ public class ScoreBoardPanel extends JPanel {
     private Color silverColor = new Color(192, 192, 192);
     private Color bronzeColor = new Color(205, 127, 50);
     
+    // Constructor: setup panel dimensions and assets
     public ScoreBoardPanel() {
         setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
         setLayout(null);
@@ -39,9 +40,9 @@ public class ScoreBoardPanel extends JPanel {
             System.err.println("Error loading scoreboard images");
         }
     }
-    
+
     private void createButtons() { // ENCAPSULATION: button creation details hidden
-        JButton homeButton = new JButton("Back to Home"); // TODO: CHANGE TO BUTTON
+        JButton homeButton = new JButton("Back to Home"); 
         homeButton.setBounds(250, 501, 130, 40);
         homeButton.setFont(new Font("Arial", Font.BOLD, 12));
         homeButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -53,17 +54,18 @@ public class ScoreBoardPanel extends JPanel {
         add(homeButton) ;
 
 
-        JButton clearButton = new JButton("Clear Scores"); // TODO: CHANGE TO BUTTON
+        JButton clearButton = new JButton("Clear Scores"); 
         clearButton.setBounds(420, 501, 130, 40);
         clearButton.setFont(new Font("Arial", Font.BOLD, 12));
         clearButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         clearButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
         clearButton.setBackground(new Color (200, 0, 0));
         clearButton.setForeground(Color.WHITE);
-        clearButton.addActionListener(e -> clearScores()); // Clearing is handled by ScoreManager
+        clearButton.addActionListener(e -> clearScores()); 
         add(clearButton);
     }
     
+    // Switch back to MainMenuPanel
     private void goBack() {
         JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
         frame.getContentPane().removeAll();
@@ -71,7 +73,7 @@ public class ScoreBoardPanel extends JPanel {
         frame.revalidate();
         frame.repaint();
     }
-    
+    // Clear persisting scores from highscores.txt
     private void clearScores() {
         int confirm = JOptionPane.showConfirmDialog(this, "Clear all scores?", "Confirm", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {

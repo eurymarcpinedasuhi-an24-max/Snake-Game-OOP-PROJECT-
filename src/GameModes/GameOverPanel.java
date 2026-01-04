@@ -10,17 +10,18 @@ import java.io.InputStream;
 
 public class GameOverPanel extends JPanel {
     
-    private BufferedImage labelImage, homeButtonImage, retryButtonImage;
-    private int score, gameMode, difficulty;
-    private String playerName, title;
-    public boolean isPause = false;
-    public GamePanel panel;
+    private BufferedImage labelImage, homeButtonImage, retryButtonImage; // Images
+    private int score, gameMode, difficulty; // States
+    private String playerName, title; // Display
+    public boolean isPause = false; // Pause flag
+    public GamePanel panel; // reference to GamePanel 
 
-    // Game Over
+    // Game Over Constructor
     public GameOverPanel(int score, int gameMode, int difficulty, String playername) {
         this(score, gameMode, difficulty, playername, "GAME OVER");
     }
     
+    // Main constructor, extended functionality for pause
     public GameOverPanel(int score, int gameMode, int difficulty, String playerName, String title) {
         this.score = score;
         this.gameMode = gameMode;
@@ -61,6 +62,7 @@ public class GameOverPanel extends JPanel {
         }
     }
     
+    // Navigation buttons TODO: Improve quality, maybe add hover effects.
     private void createButtons() {
         int panelWidth = 300, buttonSize = 50, buttonY = 120, gap = 40;
         
@@ -75,6 +77,7 @@ public class GameOverPanel extends JPanel {
         add(retryBtn);
     }
     
+    // Helper for button creation using image/fallback text
     private JButton createImageButton(BufferedImage image, String fallbackText) {
         JButton button = new JButton();
         if (image != null) {
@@ -89,7 +92,7 @@ public class GameOverPanel extends JPanel {
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return button;
     }
-    
+    // Navigate to mainmenu and save game if paused
     private void goToMainMenu() {
         if(isPause){
             panel.saveGame();
@@ -100,7 +103,7 @@ public class GameOverPanel extends JPanel {
         frame.revalidate();
         frame.repaint();
     }
-    
+    // Restart with same parameters
     private void retryGame() {
         JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
         frame.getContentPane().removeAll();
@@ -111,7 +114,7 @@ public class GameOverPanel extends JPanel {
         gamePanel.requestFocusInWindow();
     }
 
-    @Override
+    @Override // Polymorphis overriding JPanel.paintComponent for customizability
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
