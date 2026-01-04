@@ -28,7 +28,6 @@ public class MainMenuPanel extends JPanel {
         createButtons();
     }
     
-
     private void loadBackground() {
         try {
             // load images from resources folder
@@ -43,7 +42,6 @@ public class MainMenuPanel extends JPanel {
         }
     }
     
-
     // Creating and positioning menu buttons with action listeners
     private void createButtons() {
         // Button dimensions and positioning
@@ -91,19 +89,6 @@ public class MainMenuPanel extends JPanel {
 
         parentFrame.revalidate();
         parentFrame.repaint();
-        
-        /** System.out.println("Play button clicked!");
-
-        JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this); // Parent JFrame
-        parentFrame.getContentPane().removeAll(); // Clearing current panel
-        GamePanel gamePanel = new GamePanel(); // Create new game panel — see GameModes/GamePanel.java
-        parentFrame.add(gamePanel); 
-
-        parentFrame.revalidate(); // Refresh frame 
-        parentFrame.repaint();
-
-        gamePanel.requestFocusInWindow(); */
-
     }
     
     // Handler for Options button click event.
@@ -136,8 +121,6 @@ public class MainMenuPanel extends JPanel {
 
         JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
         frame.getContentPane().removeAll();
-
-        // TODO: Migrate scoreboard panel to package Main
         frame.add(new GameModes.ScoreBoardPanel());
         frame.revalidate();
         frame.repaint();
@@ -175,7 +158,7 @@ public class MainMenuPanel extends JPanel {
             g2d.drawImage(boardImage, boardX, boardY, boardWidth, boardHeight, null);
         }
         
-        // Draw game title with shadow effect (TODO:  BE REPLACED WITH IMAGE LATER)
+        // Draw game title with shadow effect
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2d.setFont(new Font("Arial", Font.BOLD, 49));
         g2d.setColor(new Color(255, 215, 100));

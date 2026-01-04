@@ -132,6 +132,7 @@ public class ConfigurationPanel extends JPanel {
         startBtn.addActionListener(e -> startGame());
         add(startBtn);
     }
+    
     private JButton createModeButton(int index) {
         JButton button = new JButton() {  // Polymorphism / method override for custom painting 4 board. TODO: add separate images for each mode
             @Override
@@ -188,7 +189,8 @@ public class ConfigurationPanel extends JPanel {
         
         return button;
 }
-private void updateModeButtons() {
+    
+    private void updateModeButtons() {
         for (int i = 0; i < 4; i++) {
             if (i == selectedMode) {
                 modeButtons[i].setBorder(BorderFactory.createLineBorder(Color.WHITE, 3));
@@ -198,7 +200,8 @@ private void updateModeButtons() {
         }
         repaint();
     }
-     private JButton createArrowButton(BufferedImage image, int direction) {
+    
+    private JButton createArrowButton(BufferedImage image, int direction) {
         JButton button = new JButton();
         
         if (image != null) {
@@ -229,10 +232,11 @@ private void updateModeButtons() {
         
         return button;
     }
+    
     // Update difficutlty based on current selection
     private void updateDifficultyLabels() {
-    difficultyNameLabel.setText(difficulties[selectedDifficulty]);
-    difficultyDescLabel.setText(diffSpeeds[selectedDifficulty] + " - " + diffMultipliers[selectedDifficulty] + "x Multiplier");
+        difficultyNameLabel.setText(difficulties[selectedDifficulty]);
+        difficultyDescLabel.setText(diffSpeeds[selectedDifficulty] + " - " + diffMultipliers[selectedDifficulty] + "x Multiplier");
     }
 
     // Start game itself. Nothing else to modify here.
@@ -270,7 +274,8 @@ private void updateModeButtons() {
         frame.repaint();
         gamePanel.requestFocusInWindow();
     }
-@Override
+    
+    @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
